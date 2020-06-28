@@ -63,7 +63,7 @@ end
 
 function love.keypressed(key, scancode, isrepeat)
 	-- Toggle editor
-	if (key == "e") then
+	if (key == "e" and not Heartbeat.editor.commandMode) then
 		Heartbeat.editor.isActive = not Heartbeat.editor.isActive
 	end
 	if (Heartbeat.editor.isActive) then
