@@ -1026,13 +1026,13 @@ function Heartbeat.beat()
 		Heartbeat.doPlayer()
 		Heartbeat.checkRooms()
 	end
+	Camera.update()
 	Heartbeat.drawBackground()
 	Heartbeat.drawTiles()
 	Heartbeat.drawEntities()
 	Heartbeat.drawItems()
 	Heartbeat.drawPlayer()
 	Heartbeat.editor.drawEditor()
-	Camera.update()
 	if (Heartbeat.dialog.isOpen) then
 		Heartbeat.dialog.drawDialog()
 	end
