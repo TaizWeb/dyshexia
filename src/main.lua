@@ -7,7 +7,7 @@ require("items/coin")
 
 function love.load()
 	-- Basic setup for love/Heartbeat
-	love.window.setTitle("Dylexinomicon")
+	love.window.setTitle("Dyshexia")
 	love.keyboard.setKeyRepeat(true)
 	love.filesystem.setIdentity("dyslexia")
 	windowWidth = love.graphics.getWidth()
