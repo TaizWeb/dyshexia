@@ -7,3 +7,8 @@ Coin = {
 	scaleY = 1.5
 }
 
+function Coin.onPickup(this)
+	Player.money = Player.money + math.ceil(math.random() * 100)
+	Heartbeat.removeItem(this)
+end
+
