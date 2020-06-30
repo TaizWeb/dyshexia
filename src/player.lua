@@ -37,3 +37,34 @@ function Player.drawUI()
 	love.graphics.print("\n/G/old:" .. Player.money)
 end
 
+function Player.checkVision()
+	-- You reading this is just as painful as it was for me to code it in
+	local visibleTiles = {
+		-- left tile
+		Heartbeat.getTile(Heartbeat.player.x - 10, Heartbeat.player.y),
+		-- right tile
+		Heartbeat.getTile(Heartbeat.player.x + Heartbeat.player.width + 10, Heartbeat.player.y),
+		-- above tile
+		Heartbeat.getTile(Heartbeat.player.x, Heartbeat.player.y - 10),
+		-- below tile
+		Heartbeat.getTile(Heartbeat.player.x, Heartbeat.player.y + Heartbeat.player.height + 10),
+		-- left above tile
+		Heartbeat.getTile(Heartbeat.player.x - 10, Heartbeat.player.y - 10),
+		-- right above tile
+		Heartbeat.getTile(Heartbeat.player.x + Heartbeat.player.width + 10, Heartbeat.player.y - 10),
+		-- left below tile
+		Heartbeat.getTile(Heartbeat.player.x - 10, Heartbeat.player.y + Heartbeat.player.height + 10),
+		-- right below tile
+		Heartbeat.getTile(Heartbeat.player.x + Heartbeat.player.width + 10, Heartbeat.player.y + Heartbeat.player.height + 10)
+	}
+	-- Lua has no .length and #visibleTiles would be how many elements aren't nil
+	local visibleTileCount = 8
+
+	for i=1,visibleTileCount do
+		if (visibleTiles[i] ~= nil) then
+			visibleTiles[i].scaleX = 25/16
+			visibleTiles[i].scaleY = 25/16
+		end
+	end
+end
+

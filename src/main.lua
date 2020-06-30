@@ -23,42 +23,43 @@ function love.load()
 	Heartbeat.tilesList = {Wall}
 	Heartbeat.entitiesList = {Skeleton}
 	Heartbeat.itemsList = {Coin}
+	-- A cheap way to make tiles "invisible" before the player sees them
+	for i=1,#Heartbeat.tilesList do
+		Heartbeat.tilesList[i].scaleX = 0
+		Heartbeat.tilesList[i].scaleY = 0
+	end
 end
 
--- moveLeft: Moves the entity left assuming the space is unoccupied
-function moveLeft(this)
-	if (Heartbeat.getTile(this.x - 10, this.y) == nil) then
-		this.x = this.x - 25
+-- moveEntity: Moves an entity in a given direction assuming there's no obstruction
+function moveEntity(this, direction)
+	if (direction == "left") then
+		if (Heartbeat.getTile(this.x - 10, this.y) == nil) then
+			this.x = this.x - 25
+		end
+		this.texture = this.textures.side
+		this.forwardFace = false
+	elseif (direction == "right") then
+		if (Heartbeat.getTile(this.x + this.width + 10, this.y) == nil) then
+			this.x = this.x + 25
+		end
+		this.texture = this.textures.side
+		this.forwardFace = true
+	elseif (direction == "up") then
+		if (Heartbeat.getTile(this.x, this.y - 10) == nil) then
+			this.y = this.y - 25
+		end
+		this.texture = this.textures.back
+		this.forwardFace = true
+	elseif (direction == "down") then
+		if (Heartbeat.getTile(this.x, this.y + this.height + 10) == nil) then
+			this.y = this.y + 25
+		end
+		this.texture = this.textures.front
+		this.forwardFace = true
 	end
-	this.texture = this.textures.side
-	this.forwardFace = false
-end
-
--- moveRight: Moves the entity right assuming the space is unoccupied
-function moveRight(this)
-	if (Heartbeat.getTile(this.x + this.width + 10, this.y) == nil) then
-		this.x = this.x + 25
+	if (this == Heartbeat.player) then
+		Player.checkVision()
 	end
-	this.texture = this.textures.side
-	this.forwardFace = true
-end
-
--- moveUp: Moves the entity up assuming the space is unoccupied
-function moveUp(this)
-	if (Heartbeat.getTile(this.x, this.y - 10) == nil) then
-		this.y = this.y - 25
-	end
-	this.texture = this.textures.back
-	this.forwardFace = true
-end
-
--- moveDown: Moves the entity down assuming the space is unoccupied
-function moveDown(this)
-	if (Heartbeat.getTile(this.x, this.y + this.height + 10) == nil) then
-		this.y = this.y + 25
-	end
-	this.texture = this.textures.front
-	this.forwardFace = true
 end
 
 function love.keypressed(key, scancode, isrepeat)
@@ -72,17 +73,8 @@ function love.keypressed(key, scancode, isrepeat)
 
 	if (not Heartbeat.editor.isActive) then
 		-- Handle movement
-		if (key == "left") then
-			moveLeft(Heartbeat.player)
-		end
-		if (key == "right") then
-			moveRight(Heartbeat.player)
-		end
-		if (key == "up") then
-			moveUp(Heartbeat.player)
-		end
-		if (key == "down") then
-			moveDown(Heartbeat.player)
+		if (key == "left" or key == "right" or key == "up" or key == "down") then
+			moveEntity(Heartbeat.player, key)
 		end
 	end
 end
@@ -90,6 +82,17 @@ end
 function love.mousepressed(x, y, button, istouch, presses)
 	if (Heartbeat.editor.isActive) then
 		Heartbeat.editor.handleInput(button)
+	end
+end
+
+function love.update(dt)
+	if (Heartbeat.editor.isActive) then
+		if (love.mouse.isDown(1) and Heartbeat.editor.mode == "tile") then
+			Heartbeat.editor.handleInput(1)
+		end
+		if (love.mouse.isDown(2)) then
+			Heartbeat.editor.handleInput(2)
+		end
 	end
 end
 
