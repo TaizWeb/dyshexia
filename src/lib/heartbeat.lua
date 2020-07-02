@@ -116,6 +116,7 @@ function Heartbeat.newEntity(object, x, y)
 		Heartbeat.entities[#Heartbeat.entities+1] = {
 			id = object.id,
 			texture = object.texture,
+			textures = object.textures,
 			x = x,
 			y = y,
 			originalX = object.x,
@@ -124,6 +125,8 @@ function Heartbeat.newEntity(object, x, y)
 			dy = 0,
 			width = object.width,
 			height = object.height,
+			scaleX = object.scaleX,
+			scaleY = object.scaleY,
 			rotation = object.rotation,
 			health = object.health,
 			attack = object.attack,
@@ -1022,7 +1025,7 @@ end
 -- Heartbeat's main function
 function Heartbeat.beat()
 	if (not Heartbeat.editor.isActive) then
-		Heartbeat.doEntities()
+		--Heartbeat.doEntities()
 		Heartbeat.doPlayer()
 		Heartbeat.checkRooms()
 	end
