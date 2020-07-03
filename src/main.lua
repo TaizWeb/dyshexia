@@ -2,7 +2,9 @@ love.graphics.setDefaultFilter("nearest", "nearest")
 require("lib/heartbeat")
 require("player")
 require("tiles")
+require("level")
 require("entities/skeleton")
+require("entities/zombie")
 require("items/coin")
 
 function love.load()
@@ -20,8 +22,8 @@ function love.load()
 	Heartbeat.editor.snapToGrid = true
 	-- Adding the player/entities to Heartbeat
 	Heartbeat.createPlayer(Player, 300, 300)
-	Heartbeat.tilesList = {Wall}
-	Heartbeat.entitiesList = {Skeleton}
+	Heartbeat.tilesList = {Wall, Ground}
+	Heartbeat.entitiesList = {Zombie, Skeleton}
 	Heartbeat.itemsList = {Coin}
 	-- A cheap way to make tiles "invisible" before the player sees them
 	for i=1,#Heartbeat.tilesList do
@@ -32,26 +34,39 @@ end
 
 -- moveEntity: Moves an entity in a given direction assuming there's no obstruction
 function moveEntity(this, direction)
+	-- I'd like to make this more clever at some point, for example by not having tile/entity be defined in different ways four different times
+	-- Perhaps have the dimensions to check entity/tile in the if statements, then do the checks all in the same line?
+	-- For now, this will do.
+	local tile
+	local entity
 	if (direction == "left") then
-		if (Heartbeat.getTile(this.x - 10, this.y) == nil) then
+		tile = Heartbeat.getTile(this.x - 10, this.y)
+		entity = Heartbeat.getEntity(this.x - 10, this.y)
+		if ((tile == nil or not tile.isSolid) and entity == nil) then
 			this.x = this.x - 25
 		end
 		this.texture = this.textures.side
 		this.forwardFace = false
 	elseif (direction == "right") then
-		if (Heartbeat.getTile(this.x + this.width + 10, this.y) == nil) then
+		tile = Heartbeat.getTile(this.x + this.width + 10, this.y)
+		entity = Heartbeat.getEntity(this.x + this.width + 10, this.y)
+		if ((tile == nil or not tile.isSolid) and entity == nil) then
 			this.x = this.x + 25
 		end
 		this.texture = this.textures.side
 		this.forwardFace = true
 	elseif (direction == "up") then
-		if (Heartbeat.getTile(this.x, this.y - 10) == nil) then
+		tile = Heartbeat.getTile(this.x, this.y - 10)
+		entity = Heartbeat.getEntity(this.x, this.y - 10)
+		if ((tile == nil or not tile.isSolid) and entity == nil) then
 			this.y = this.y - 25
 		end
 		this.texture = this.textures.back
 		this.forwardFace = true
 	elseif (direction == "down") then
-		if (Heartbeat.getTile(this.x, this.y + this.height + 10) == nil) then
+		tile = Heartbeat.getTile(this.x, this.y + this.height + 10)
+		entity = Heartbeat.getEntity(this.x, this.y + this.height + 10)
+		if ((tile == nil or not tile.isSolid) and entity == nil) then
 			this.y = this.y + 25
 		end
 		this.texture = this.textures.front
@@ -59,10 +74,24 @@ function moveEntity(this, direction)
 	end
 	if (this == Heartbeat.player) then
 		Player.checkVision()
+		Heartbeat.doEntities()
+	end
+end
+
+function isAdjacent(entity, target)
+	if (((entity.y + 25) == target.y and entity.x == target.x) or 
+		((entity.y - 25) == target.y and entity.x == target.x) or
+		((entity.x - 25) == target.x and entity.y == target.y) or
+		((entity.x + 25) == target.x and entity.y == target.y)
+		) then
+		return true
 	end
 end
 
 function love.keypressed(key, scancode, isrepeat)
+	if (key == "g") then
+		Level.generateRoom(1200, 1200)
+	end
 	-- Toggle editor
 	if (key == "e" and not Heartbeat.editor.commandMode) then
 		Heartbeat.editor.isActive = not Heartbeat.editor.isActive
@@ -75,6 +104,10 @@ function love.keypressed(key, scancode, isrepeat)
 		-- Handle movement
 		if (key == "left" or key == "right" or key == "up" or key == "down") then
 			moveEntity(Heartbeat.player, key)
+		end
+		-- Skip turn
+		if (key == "z") then
+			Heartbeat.doEntities()
 		end
 	end
 end
