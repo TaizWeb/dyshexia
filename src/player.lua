@@ -8,6 +8,10 @@ Player = {
 	height = 25,
 	width = 25,
 	health = 50,
+	spell = {
+		element = "fire",
+		pattern = "burst"
+	},
 	money = 0
 }
 
@@ -61,3 +65,19 @@ function Player.checkVision()
 	end
 end
 
+function Player.cast()
+	if (Heartbeat.player.direction == "up") then
+		Spells.pattern[Player.spell.pattern](Heartbeat.player.x, Heartbeat.player.y - 25)
+	elseif (Heartbeat.player.direction == "down") then
+		Spells.pattern[Player.spell.pattern](Heartbeat.player.x, Heartbeat.player.y + 25)
+	elseif (Heartbeat.player.direction == "right") then
+		Spells.pattern[Player.spell.pattern](Heartbeat.player.x + 25, Heartbeat.player.y)
+	else 
+		Spells.pattern[Player.spell.pattern](Heartbeat.player.x - 25, Heartbeat.player.y)
+	end
+end
+
+function Player.onDeath()
+	-- Yolo
+	love.event.quit()
+end
