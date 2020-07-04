@@ -3,6 +3,8 @@ require("lib/heartbeat")
 require("player")
 require("tiles")
 require("level")
+require("spells")
+require("menu")
 require("entities/skeleton")
 require("entities/zombie")
 require("items/coin")
@@ -22,6 +24,7 @@ function love.load()
 	Heartbeat.editor.snapToGrid = true
 	-- Adding the player/entities to Heartbeat
 	Heartbeat.createPlayer(Player, 300, 300)
+	Heartbeat.player.direction = "down"
 	Heartbeat.tilesList = {Wall, Ground}
 	Heartbeat.entitiesList = {Zombie, Skeleton}
 	Heartbeat.itemsList = {Coin}
@@ -30,13 +33,15 @@ function love.load()
 		Heartbeat.tilesList[i].scaleX = 0
 		Heartbeat.tilesList[i].scaleY = 0
 	end
+
+	isPaused = false
 end
 
 -- moveEntity: Moves an entity in a given direction assuming there's no obstruction
 function moveEntity(this, direction)
 	-- I'd like to make this more clever at some point, for example by not having tile/entity be defined in different ways four different times
 	-- Perhaps have the dimensions to check entity/tile in the if statements, then do the checks all in the same line?
-	-- For now, this will do.
+	-- For now, this will do, despite not being DRY
 	local tile
 	local entity
 	if (direction == "left") then
@@ -72,6 +77,11 @@ function moveEntity(this, direction)
 		this.texture = this.textures.front
 		this.forwardFace = true
 	end
+
+	-- Store the direction away for later usage
+	this.direction = direction
+
+	-- My turn your turn and update vision
 	if (this == Heartbeat.player) then
 		Player.checkVision()
 		Heartbeat.doEntities()
@@ -79,7 +89,7 @@ function moveEntity(this, direction)
 end
 
 function isAdjacent(entity, target)
-	if (((entity.y + 25) == target.y and entity.x == target.x) or 
+	if (((entity.y + 25) == target.y and entity.x == target.x) or
 		((entity.y - 25) == target.y and entity.x == target.x) or
 		((entity.x - 25) == target.x and entity.y == target.y) or
 		((entity.x + 25) == target.x and entity.y == target.y)
@@ -100,15 +110,20 @@ function love.keypressed(key, scancode, isrepeat)
 		Heartbeat.editor.handleInput(key)
 	end
 
-	if (not Heartbeat.editor.isActive) then
+	if (not Heartbeat.editor.isActive and not isPaused) then
 		-- Handle movement
 		if (key == "left" or key == "right" or key == "up" or key == "down") then
 			moveEntity(Heartbeat.player, key)
 		end
 		-- Skip turn
 		if (key == "z") then
+			Player.cast()
 			Heartbeat.doEntities()
 		end
+	end
+
+	if (key == "return") then
+		isPaused = not isPaused
 	end
 end
 
@@ -131,5 +146,19 @@ end
 
 function love.draw()
 	Heartbeat.beat()
+	-- Do spell animations
+	if (Spells.animationActive) then
+		Spells.animationTimer = Spells.animationTimer - 1
+		if (Spells.animationTimer == 0) then
+			Spells.animationActive = false
+		else
+			Spells.animationTarget()
+		end
+	end
+	
+	-- Draw menu
+	if (isPaused) then
+		Menu.drawMenu()
+	end
 end
 
