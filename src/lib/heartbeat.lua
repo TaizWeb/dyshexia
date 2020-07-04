@@ -71,6 +71,7 @@ function Heartbeat.createPlayer(object, x, y)
 	Heartbeat.player.cooldownFrames = 0
 	Heartbeat.player.texture = object.texture
 	Heartbeat.player.textures = object.textures
+	Heartbeat.player.onDeath = object.onDeath
 end
 
 -- drawPlayer: Draws the player to the screen
@@ -305,6 +306,7 @@ function Heartbeat.player.hasInventoryItem(item)
 	end
 end
 
+-- TODO: Remove these in favor of using the entity one
 function Heartbeat.player.updateHealth(value)
 	if (Heartbeat.player.cooldownFrames <= 0 and not Heartbeat.dialog.isOpen) then
 		if (value <= 0) then
