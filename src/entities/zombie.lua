@@ -11,6 +11,7 @@ Zombie = {
 	scaleX = 3,
 	scaleY = 3,
 	health = 10,
+	attack = 5,
 	isEnemy = true
 }
 
@@ -45,7 +46,7 @@ function Zombie.behaivor(this)
 end
 
 function Zombie.attack(this)
-	print("Rawr xd")
+	Heartbeat.updateEntityHealth(Heartbeat.player, Heartbeat.player.health - 5)
 end
 
 function Zombie.onDeath(this)
