@@ -8,6 +8,7 @@ require("menu")
 require("entities/skeleton")
 require("entities/zombie")
 require("items/coin")
+require("items/scroll")
 
 function love.load()
 	-- Basic setup for love/Heartbeat
@@ -27,7 +28,7 @@ function love.load()
 	Heartbeat.player.direction = "down"
 	Heartbeat.tilesList = {Wall, Ground}
 	Heartbeat.entitiesList = {Zombie, Skeleton}
-	Heartbeat.itemsList = {Coin}
+	Heartbeat.itemsList = {Coin, Scroll}
 	-- A cheap way to make tiles "invisible" before the player sees them
 	for i=1,#Heartbeat.tilesList do
 		Heartbeat.tilesList[i].scaleX = 0
@@ -124,6 +125,10 @@ function love.keypressed(key, scancode, isrepeat)
 
 	if (key == "return") then
 		isPaused = not isPaused
+	end
+
+	if (isPaused) then
+		Menu.handleKey(key)
 	end
 end
 
