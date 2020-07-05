@@ -9,10 +9,11 @@ Player = {
 	width = 25,
 	health = 50,
 	spell = {
-		element = nil,
-		pattern = nil
+		element = "fire",
+		pattern = "burst"
 	},
-	money = 0
+	money = 0,
+	currentLevel = 1
 }
 
 function Player.draw(this)
