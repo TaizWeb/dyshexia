@@ -9,6 +9,7 @@ require("entities/skeleton")
 require("entities/zombie")
 require("items/coin")
 require("items/scroll")
+require("items/ladder")
 
 function love.load()
 	-- Basic setup for love/Heartbeat
@@ -28,12 +29,14 @@ function love.load()
 	Heartbeat.player.direction = "down"
 	Heartbeat.tilesList = {Wall, Ground}
 	Heartbeat.entitiesList = {Zombie, Skeleton}
-	Heartbeat.itemsList = {Coin, Scroll}
+	Heartbeat.itemsList = {Coin, Scroll, Ladder}
 	-- A cheap way to make tiles "invisible" before the player sees them
 	for i=1,#Heartbeat.tilesList do
 		Heartbeat.tilesList[i].scaleX = 0
 		Heartbeat.tilesList[i].scaleY = 0
 	end
+
+	Heartbeat.editor.readLevel("level1")
 
 	isPaused = false
 end
