@@ -1,15 +1,15 @@
 Zombie = {
 	id = "zombie",
-	--texture = love.graphics.newImage("assets/entities/zombie/zombie-front.png"),
+	texture = love.graphics.newImage("assets/entities/zombie/zombie-front.png"),
 	textures = {
-		--front = love.graphics.newImage("assets/entities/zombie/zombie-front.png"),
-		--back = love.graphics.newImage("assets/entities/zombie/zombie-back.png"),
-		--side = love.graphics.newImage("assets/entities/zombie/zombie-side.png")
+		front = love.graphics.newImage("assets/entities/zombie/zombie-front.png"),
+		back = love.graphics.newImage("assets/entities/zombie/zombie-back.png"),
+		side = love.graphics.newImage("assets/entities/zombie/zombie-side.png")
 	},
 	height = 25,
 	width = 25,
-	scaleX = 3,
-	scaleY = 3,
+	scaleX = 2,
+	scaleY = 2,
 	health = 10,
 	attack = 5,
 	isEnemy = true
@@ -21,6 +21,7 @@ function Zombie.draw(this)
 	else
 		this.scaleX = 3
 	end
+	this.scaleY = 3
 	Heartbeat.draw(this)
 end
 
