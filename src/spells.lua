@@ -7,6 +7,7 @@ Spells = {
 }
 
 Spells.element.fire = {
+	id = "fire",
 	damageType = "fire",
 	texture = love.graphics.newImage("assets/spells/fire.png"),
 	scaleX = 3,
@@ -15,7 +16,11 @@ Spells.element.fire = {
 	offsetY = 0
 }
 
-function Spells.pattern.burst(x, y)
+Spells.pattern.burst = {
+	id = "burst"
+}
+
+function Spells.pattern.burst.use(x, y)
 	Spells.x = x
 	Spells.y = y
 	Spells.animationTarget = burstAnimation
