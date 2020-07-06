@@ -19,11 +19,11 @@ Player = {
 function Player.draw(this)
 	-- Figure out offsets depending on the direction the player is facing
 	if (not this.forwardFace) then
-		this.scaleX = -3
-		this.scaleY = 3
+		this.scaleX = -2
+		this.scaleY = 2
 		this.offsetX = 11
 	else
-		this.scaleX = 3
+		this.scaleX = 2
 		this.offsetX = 5
 		this.offsetY = 5
 	end
@@ -74,7 +74,7 @@ function Player.cast()
 			Spells.pattern[Player.spell.pattern].use(Heartbeat.player.x, Heartbeat.player.y + 25)
 		elseif (Heartbeat.player.direction == "right") then
 			Spells.pattern[Player.spell.pattern].use(Heartbeat.player.x + 25, Heartbeat.player.y)
-		else 
+		else
 			Spells.pattern[Player.spell.pattern].use(Heartbeat.player.x - 25, Heartbeat.player.y)
 		end
 	end

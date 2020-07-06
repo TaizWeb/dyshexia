@@ -17,11 +17,14 @@ Zombie = {
 
 function Zombie.draw(this)
 	if (not this.forwardFace) then
-		this.scaleX = -3
+		this.scaleX = -2
+		this.offsetX = 11
 	else
-		this.scaleX = 3
+		this.scaleX = 2
+		this.offsetX = 0
 	end
-	this.scaleY = 3
+	this.scaleY = 2
+	love.graphics.rectangle("fill", Camera.convert("x", this.x), Camera.convert("y", this.y), this.width, this.height)
 	Heartbeat.draw(this)
 end
 
