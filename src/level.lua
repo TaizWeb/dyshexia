@@ -2,14 +2,23 @@ Level = {
 	minWidth = 5,
 	maxWidth = 15,
 	minHeight = 5,
-	maxHeight = 15
+	maxHeight = 15,
+	maxRooms = 3,
+	roomCount = 0
 }
+-- TODO: Add a tunnel length min/max
+math.randomseed(os.time())
 
 -- generateRoom: Generates a single square room
--- Parameters: x/y for room location (optional), width/height for custom dimensions (optional)
+-- Parameters: x/y for room location (optional), width/height for custom dimensions (in terms of tiles, so 100 pixels should be 4) (optional)
 function Level.generateRoom(x, y, width, height)
+	-- Break out of generation if roomCount exceeds maxRooms
+	if (Level.roomCount >= Level.maxRooms) then
+		return 0
+	end
+	Level.roomCount = Level.roomCount + 1
+
 	-- TODO: Possibly refactor this later to just use the parameters instead of assigning new variables
-	math.randomseed(os.time())
 	local startX
 	local startY
 	local roomWidth
@@ -24,8 +33,9 @@ function Level.generateRoom(x, y, width, height)
 		startY = y
 	end
 	if (width == nil or height == nil) then
-		roomWidth = math.random(maxWidth - minWidth) + minWidth
-		roomHeight = math.random(maxHeight - minHeight) + minHeight
+		-- TODO: Implement DRY on this? Make a function to return these dimensions? It's repeated once though.
+		roomWidth = math.random(Level.maxWidth - Level.minWidth) + Level.minWidth
+		roomHeight = math.random(Level.maxHeight - Level.minHeight) + Level.minHeight
 	else
 		roomWidth = width
 		roomHeight = height
@@ -34,6 +44,7 @@ function Level.generateRoom(x, y, width, height)
 	-- Put the player right in the upper corner of the dungeon to check the structure
 	Heartbeat.player.x = startX - 25
 	Heartbeat.player.y = startY - 25
+	print(Heartbeat.player.x .. " " .. Heartbeat.player.y)
 
 	-- Later do a thing where it compares against the end of the screen and makes it snug
 	-- Perhaps adjust width/height directly?
@@ -45,13 +56,11 @@ function Level.generateRoom(x, y, width, height)
 	--end
 
 	-- Making the room (square)
-	local generateOnce = false
 	for j=1,roomHeight do
 		for i=1,roomWidth do
 			-- Generate the tunnels. There's a cleaner way of doing this but fuck it
-			if (i == 1 and math.random(1) == 1 and not generateOnce) then
+			if (i == 1 and math.random(15) == 1) then
 				Level.generateTunnel(startX, startY, "left")
-				generateOnce = true
 			end
 			--if (i == roomWidth and math.random(15) == 1) then
 				--Level.generateTunnel(startX, startY, "right")
@@ -74,14 +83,16 @@ function Level.generateRoom(x, y, width, height)
 		startX = startX - (25 * roomWidth)
 		startY = startY + 25
 	end
+
+	print("Incremented")
 end
 
 -- generateTunnel: Generates a tunnel given location and which wall it's on
 -- Parameters: x/y for location, direction for which wall it's extending from
 function Level.generateTunnel(x, y, direction)
 	local tunnelLength = math.random(7) + 3
-	local roomWidth = math.random(maxWidth - minWidth) + minWidth
-	local roomHeight = math.random(maxHeight - minHeight) + minHeight
+	local roomWidth = math.random(Level.maxWidth - Level.minWidth) + Level.minWidth
+	local roomHeight = math.random(Level.maxHeight - Level.minHeight) + Level.minHeight
 	--startX = math.floor(((math.random() * Heartbeat.levelWidth) / 25)) * 25
 	--startY = math.floor(((math.random() * Heartbeat.levelHeight) / 25)) * 25
 	-- Place tunnels are proper locations for the four cardinal directions
@@ -107,6 +118,8 @@ function Level.generateTunnel(x, y, direction)
 			Heartbeat.newTile(Ground, x, y)
 			Heartbeat.newTile(Wall, x, y + 25)
 		end
+		print("I got called")
+		Level.generateRoom(x - (25 * roomWidth), y - (25 * roomHeight), roomWidth, roomHeight)
 	elseif (direction == "right") then
 		for i=1,tunnelLength do
 			x = x + 25
