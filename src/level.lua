@@ -119,7 +119,7 @@ function Level.generateTunnel(x, y, direction)
 			Heartbeat.newTile(Wall, x, y + 25)
 		end
 		print("I got called")
-		Level.generateRoom(x - (25 * roomWidth), y - (25 * roomHeight), roomWidth, roomHeight)
+		Level.generateRoom(x - (25 * roomWidth), y - (math.random(roomHeight) * 25), roomWidth, roomHeight)
 	elseif (direction == "right") then
 		for i=1,tunnelLength do
 			x = x + 25
