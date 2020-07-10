@@ -1,9 +1,13 @@
+-- TODO: Add tunnel length to Level config and set tilesets/enemytypes/loottables for each "dungeon"
 Level = {
+	-- Individual room min/max dimensions
 	minWidth = 5,
 	maxWidth = 15,
 	minHeight = 5,
 	maxHeight = 15,
+	-- Max rooms in a dungeon
 	maxRooms = 10,
+	-- Internal value of level generator, don't touch
 	roomCount = 0
 }
 -- TODO: Add a tunnel length min/max
@@ -63,18 +67,20 @@ function Level.generateRoom(x, y, width, height)
 			end
 
 			-- Generate the tunnels. There's a cleaner way of doing this but fuck it
-			if (i == 1 and j ~= 1 and j~= roomHeight and math.random(1) == 1) then
-				Level.generateTunnel(startX, startY, "left")
-			end
-			--if (i == roomWidth and math.random(15) == 1) then
+			--if (i == 1 and j ~= 1 and j~= roomHeight and math.random(1) == 1) then
+				--Level.generateTunnel(startX, startY, "left")
+			--end
+			--if (i == roomWidth and j ~= 1 and j~= roomHeight and math.random(1) == 1) then
+				--print("Generating a tunnel on the right...")
 				--Level.generateTunnel(startX, startY, "right")
 			--end
-			--if (j == 1 and math.random(15) == 1) then
+			--if (j == 1 and i ~= 1 and i ~= roomWidth and math.random(1) == 1) then
+				--print("UP TUNNEL")
 				--Level.generateTunnel(startX, startY, "up")
 			--end
-			--if (j == roomHeight and math.random(15) == 1) then
-				--Level.generateTunnel(startX, startY, "down")
-			--end
+			if (j == roomHeight and i ~= 1 and i ~= roomWidth and math.random(15) == 1) then
+				Level.generateTunnel(startX, startY, "down")
+			end
 
 			startX = startX + 25
 		end
@@ -86,7 +92,6 @@ end
 -- generateTunnel: Generates a tunnel given location and which wall it's on
 -- Parameters: x/y for location, direction for which wall it's extending from
 function Level.generateTunnel(x, y, direction)
-	-- TODO: Possibly move this to tunnel so there isn't one on the end
 	if (Level.roomCount >= Level.maxRooms) then
 		return 0
 	end
@@ -95,8 +100,6 @@ function Level.generateTunnel(x, y, direction)
 	local tunnelLength = math.random(7) + 3
 	local roomWidth = math.random(Level.maxWidth - Level.minWidth) + Level.minWidth
 	local roomHeight = math.random(Level.maxHeight - Level.minHeight) + Level.minHeight
-	--startX = math.floor(((math.random() * Heartbeat.levelWidth) / 25)) * 25
-	--startY = math.floor(((math.random() * Heartbeat.levelHeight) / 25)) * 25
 	-- Place tunnels are proper locations for the four cardinal directions
 	-- There's probably a cleaner way of doing this as well
 	Heartbeat.removeTile(nil, x, y)
@@ -105,39 +108,55 @@ function Level.generateTunnel(x, y, direction)
 		for i=1,tunnelLength do
 			y = y - 25
 			Heartbeat.newTile(Wall, x - 25, y)
-			Heartbeat.newTile(Wall, x, y)
+			Heartbeat.newTile(Ground, x, y)
 			Heartbeat.newTile(Wall, x + 25, y)
 		end
+		Level.generateRoom(x - (math.random(roomWidth-2) * 25), y - (roomHeight * 25), roomWidth, roomHeight)
+		Heartbeat.removeTile(nil, x, y - 25)
+		Heartbeat.newTile(Ground, x, y - 25)
 	elseif (direction == "down") then
 		for i=1,tunnelLength do
 			y = y + 25
 			Heartbeat.newTile(Wall, x - 25, y)
-			Heartbeat.newTile(Wall, x, y)
+			Heartbeat.newTile(Ground, x, y)
 			Heartbeat.newTile(Wall, x + 25, y)
 		end
+		Level.generateRoom(x - (math.random(roomWidth-2) * 25), y, roomWidth, roomHeight)
 	elseif (direction == "left") then
+		-- Validity check
 		if (not Level.checkValidity(x - (25 * tunnelLength), y - 25, tunnelLength * 25, 75)) then
 			print("BAD FIT")
 			return
 		end
+
+		-- Generate the tunnel
 		for i=1,tunnelLength do
 			x = x - 25
 			Heartbeat.newTile(Wall, x, y - 25)
 			Heartbeat.newTile(Ground, x, y)
 			Heartbeat.newTile(Wall, x, y + 25)
 		end
+
 		-- Make a new room
 		Level.generateRoom(x - (25 * roomWidth), y - (math.random(roomHeight-2) * 25), roomWidth, roomHeight)
 		-- Swap out the wall for ground
 		Heartbeat.removeTile(nil, x - 25, y)
 		Heartbeat.newTile(Ground, x - 25, y)
 	elseif (direction == "right") then
+		if (not Level.checkValidity(x + (25 * tunnelLength), y - 25, tunnelLength * 25, 75)) then
+			print("BAD FIT")
+			return
+		end
+
 		for i=1,tunnelLength do
 			x = x + 25
 			Heartbeat.newTile(Wall, x, y - 25)
 			Heartbeat.newTile(Ground, x, y)
 			Heartbeat.newTile(Wall, x, y + 25)
 		end
+
+		print("MAking new room at " .. x + (25 * roomWidth) .. " " .. y - (math.random(roomHeight-2) * 25))
+		Level.generateRoom(x, y - (math.random(roomHeight-2) * 25), roomWidth, roomHeight)
 	end
 end
 
