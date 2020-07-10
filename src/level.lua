@@ -3,7 +3,7 @@ Level = {
 	maxWidth = 15,
 	minHeight = 5,
 	maxHeight = 15,
-	maxRooms = 3,
+	maxRooms = 10,
 	roomCount = 0
 }
 -- TODO: Add a tunnel length min/max
@@ -13,10 +13,6 @@ math.randomseed(os.time())
 -- Parameters: x/y for room location (optional), width/height for custom dimensions (in terms of tiles, so 100 pixels should be 4) (optional)
 function Level.generateRoom(x, y, width, height)
 	-- Break out of generation if roomCount exceeds maxRooms
-	if (Level.roomCount >= Level.maxRooms) then
-		return 0
-	end
-	Level.roomCount = Level.roomCount + 1
 
 	-- TODO: Possibly refactor this later to just use the parameters instead of assigning new variables
 	local startX
@@ -58,8 +54,16 @@ function Level.generateRoom(x, y, width, height)
 	-- Making the room (square)
 	for j=1,roomHeight do
 		for i=1,roomWidth do
+
+			-- Check whether or not to use wall or ground
+			if (i == 1 or i == roomWidth or j == 1 or j == roomHeight) then
+				Heartbeat.newTile(Wall, startX, startY)
+			else
+				Heartbeat.newTile(Ground, startX, startY)
+			end
+
 			-- Generate the tunnels. There's a cleaner way of doing this but fuck it
-			if (i == 1 and math.random(15) == 1) then
+			if (i == 1 and j ~= 1 and j~= roomHeight and math.random(1) == 1) then
 				Level.generateTunnel(startX, startY, "left")
 			end
 			--if (i == roomWidth and math.random(15) == 1) then
@@ -72,24 +76,22 @@ function Level.generateRoom(x, y, width, height)
 				--Level.generateTunnel(startX, startY, "down")
 			--end
 
-			-- Check whether or not to use wall or ground
-			if (i == 1 or i == roomWidth or j == 1 or j == roomHeight) then
-				Heartbeat.newTile(Wall, startX, startY)
-			else
-				Heartbeat.newTile(Ground, startX, startY)
-			end
 			startX = startX + 25
 		end
 		startX = startX - (25 * roomWidth)
 		startY = startY + 25
 	end
-
-	print("Incremented")
 end
 
 -- generateTunnel: Generates a tunnel given location and which wall it's on
 -- Parameters: x/y for location, direction for which wall it's extending from
 function Level.generateTunnel(x, y, direction)
+	-- TODO: Possibly move this to tunnel so there isn't one on the end
+	if (Level.roomCount >= Level.maxRooms) then
+		return 0
+	end
+	Level.roomCount = Level.roomCount + 1
+
 	local tunnelLength = math.random(7) + 3
 	local roomWidth = math.random(Level.maxWidth - Level.minWidth) + Level.minWidth
 	local roomHeight = math.random(Level.maxHeight - Level.minHeight) + Level.minHeight
@@ -97,6 +99,8 @@ function Level.generateTunnel(x, y, direction)
 	--startY = math.floor(((math.random() * Heartbeat.levelHeight) / 25)) * 25
 	-- Place tunnels are proper locations for the four cardinal directions
 	-- There's probably a cleaner way of doing this as well
+	Heartbeat.removeTile(nil, x, y)
+	Heartbeat.newTile(Ground, x, y)
 	if (direction == "up") then
 		for i=1,tunnelLength do
 			y = y - 25
@@ -112,14 +116,21 @@ function Level.generateTunnel(x, y, direction)
 			Heartbeat.newTile(Wall, x + 25, y)
 		end
 	elseif (direction == "left") then
+		if (not Level.checkValidity(x - (25 * tunnelLength), y - 25, tunnelLength * 25, 75)) then
+			print("BAD FIT")
+			return
+		end
 		for i=1,tunnelLength do
 			x = x - 25
 			Heartbeat.newTile(Wall, x, y - 25)
 			Heartbeat.newTile(Ground, x, y)
 			Heartbeat.newTile(Wall, x, y + 25)
 		end
-		print("I got called")
-		Level.generateRoom(x - (25 * roomWidth), y - (math.random(roomHeight) * 25), roomWidth, roomHeight)
+		-- Make a new room
+		Level.generateRoom(x - (25 * roomWidth), y - (math.random(roomHeight-2) * 25), roomWidth, roomHeight)
+		-- Swap out the wall for ground
+		Heartbeat.removeTile(nil, x - 25, y)
+		Heartbeat.newTile(Ground, x - 25, y)
 	elseif (direction == "right") then
 		for i=1,tunnelLength do
 			x = x + 25
@@ -128,5 +139,19 @@ function Level.generateTunnel(x, y, direction)
 			Heartbeat.newTile(Wall, x, y + 25)
 		end
 	end
+end
+
+-- checkValidity: Returns true if a given structure isn't conflicting with already placed tiles
+function Level.checkValidity(x, y, width, height)
+	for i=x,width do
+		for j=y,height do
+			if (Heartbeat.getTile(i, j) ~= nil) then
+				return false
+			end
+			j = j + 25
+		end
+		i = i + 25
+	end
+	return true
 end
 
