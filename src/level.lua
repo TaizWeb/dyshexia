@@ -7,6 +7,8 @@ Level = {
 	maxHeight = 15,
 	-- Max rooms in a dungeon
 	maxRooms = 10,
+	-- How often tunnels appear, default 15 (1/15 per tile in room)
+	tunnelRarity = 15,
 	-- Internal value of level generator, don't touch
 	roomCount = 0
 }
@@ -67,18 +69,18 @@ function Level.generateRoom(x, y, width, height)
 			end
 
 			-- Generate the tunnels. There's a cleaner way of doing this but fuck it
-			--if (i == 1 and j ~= 1 and j~= roomHeight and math.random(1) == 1) then
-				--Level.generateTunnel(startX, startY, "left")
-			--end
-			--if (i == roomWidth and j ~= 1 and j~= roomHeight and math.random(1) == 1) then
-				--print("Generating a tunnel on the right...")
-				--Level.generateTunnel(startX, startY, "right")
-			--end
-			--if (j == 1 and i ~= 1 and i ~= roomWidth and math.random(1) == 1) then
-				--print("UP TUNNEL")
-				--Level.generateTunnel(startX, startY, "up")
-			--end
-			if (j == roomHeight and i ~= 1 and i ~= roomWidth and math.random(15) == 1) then
+			if (i == 1 and j ~= 1 and j~= roomHeight and math.random(Level.tunnelRarity) == 1) then
+				Level.generateTunnel(startX, startY, "left")
+			end
+			if (i == roomWidth and j ~= 1 and j~= roomHeight and math.random(Level.tunnelRarity) == 1) then
+				print("Generating a tunnel on the right...")
+				Level.generateTunnel(startX, startY, "right")
+			end
+			if (j == 1 and i ~= 1 and i ~= roomWidth and math.random(Level.tunnelRarity) == 1) then
+				print("UP TUNNEL")
+				Level.generateTunnel(startX, startY, "up")
+			end
+			if (j == roomHeight and i ~= 1 and i ~= roomWidth and math.random(Level.tunnelRarity) == 1) then
 				Level.generateTunnel(startX, startY, "down")
 			end
 
