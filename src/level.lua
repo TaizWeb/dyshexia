@@ -10,7 +10,10 @@ Level = {
 	-- How often tunnels appear, default 15 (1/15 per tile in room)
 	tunnelRarity = 10,
 	-- Internal value of level generator, don't touch
-	roomCount = 0
+	roomCount = 0,
+	-- Indexing the rooms. Used for item placement and conflict checking
+	-- The format is x, y, width, height
+	rooms = {}
 }
 -- TODO: Add a tunnel length min/max
 math.randomseed(os.time())
@@ -43,14 +46,19 @@ function Level.generateRoom(x, y, width, height)
 		roomHeight = height
 	end
 
-	if (not Level.checkValidity(startX, startY, roomWidth * 25, roomHeight * 25)) then
+	-- Index the rooms for later usage
+	Level.rooms[#Level.rooms+1] = {
+		x = startX,
+		y = startY,
+		width = roomWidth * 25,
+		height = roomHeight * 25
+	}
+
+	if (not Level.checkValidity(startX, startY, roomWidth * 25, roomHeight * 25) or not Level.checkRoomConflict(startX, startY, roomWidth * 25, roomHeight * 25)) then
 		print("BAD ROOM")
 		print("Room at " .. startX .. " " .. startY .. " with dimensions " .. roomWidth * 25 .. " " .. roomHeight * 25)
 		return
 		--Level.generateRoom()
-	else
-		print("Validity check passed, generating room")
-		print("Room at " .. startX .. " " .. startY .. " with dimensions " .. roomWidth * 25 .. " " .. roomHeight * 25)
 	end
 
 	-- Put the player right in the upper corner of the dungeon to check the structure
@@ -101,29 +109,36 @@ end
 -- generateTunnel: Generates a tunnel given location and which wall it's on
 -- Parameters: x/y for location, direction for which wall it's extending from
 function Level.generateTunnel(x, y, direction)
+	-- These are for the removeTile line at the bottom, since x/y are edited directly in the loops
+	local initialX = x
+	local initialY = y
+
+	-- Increment the room count
 	if (Level.roomCount >= Level.maxRooms) then
 		return 0
 	end
 	Level.roomCount = Level.roomCount + 1
 
+	-- Calculate both tunnel length and dimensions
 	local tunnelLength = math.random(7) + 3
 	local roomWidth = math.random(Level.maxWidth - Level.minWidth) + Level.minWidth
 	local roomHeight = math.random(Level.maxHeight - Level.minHeight) + Level.minHeight
+
 	-- Place tunnels are proper locations for the four cardinal directions
 	-- There's probably a cleaner way of doing this as well
-	Heartbeat.removeTile(nil, x, y)
-	Heartbeat.newTile(Ground, x, y)
 	if (direction == "up") then
 		if (not Level.checkValidity(x - 25, y - (25 * tunnelLength+1), 75, tunnelLength * 25)) then
 			print("Bad Up")
 			return
 		end
+
 		for i=1,tunnelLength do
 			y = y - 25
 			Heartbeat.newTile(Wall, x - 25, y)
 			Heartbeat.newTile(Ground, x, y)
 			Heartbeat.newTile(Wall, x + 25, y)
 		end
+
 		Level.generateRoom(x - (math.random(roomWidth-2) * 25), y - (roomHeight * 25), roomWidth, roomHeight)
 		Heartbeat.removeTile(nil, x, y - 25)
 		Heartbeat.newTile(Ground, x, y - 25)
@@ -175,6 +190,10 @@ function Level.generateTunnel(x, y, direction)
 
 		Level.generateRoom(x, y - (math.random(roomHeight-2) * 25), roomWidth, roomHeight)
 	end
+
+	-- Remove the old wall tile and make it a floor
+	Heartbeat.removeTile(nil, initialX, initialY)
+	Heartbeat.newTile(Ground, initialX, initialY)
 end
 
 -- checkValidity: Returns true if a given structure isn't conflicting with already placed tiles
@@ -198,5 +217,34 @@ function Level.checkValidity(x, y, width, height)
 	else
 		return true
 	end
+end
+
+function Level.checkRoomConflict(x, y, width, height)
+	-- This is a base case in the event there's only one room
+	if (#Level.rooms == 1) then
+		return true
+	end
+
+	local room1 = {
+		x = x,
+		y = y,
+		width = width,
+		height = height
+	}
+	for i=1,#Level.rooms do
+		local room2 = {
+			x = Level.rooms[1].x,
+			y = Level.rooms[1].y,
+			width = Level.rooms[1].width,
+			height = Level.rooms[1].height
+		}
+		-- I'm being a sh*tbag here using the entity function
+		if (Heartbeat.checkEntityCollision(room1, room2)) then
+			print("We got a conflict!")
+			return false
+		end
+	end
+
+	return true
 end
 
