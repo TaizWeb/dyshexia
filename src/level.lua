@@ -31,8 +31,8 @@ function Level.generateRoom(x, y, width, height)
 
 	-- Variable checking, if left unassigned set them to default values
 	if (x == nil or y == nil) then
-		startX = math.floor(((math.random() * Heartbeat.levelWidth) / 25)) * 25
-		startY = math.floor(((math.random() * Heartbeat.levelHeight) / 25)) * 25
+		startX = math.floor(((Heartbeat.levelWidth/2) / 25)) * 25
+		startY = math.floor(((Heartbeat.levelHeight/2) / 25)) * 25
 	else
 		startX = x
 		startY = y
