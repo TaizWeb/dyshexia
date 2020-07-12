@@ -8,7 +8,7 @@ Level = {
 	-- Max rooms in a dungeon
 	maxRooms = 10,
 	-- How often tunnels appear, default 15 (1/15 per tile in room)
-	tunnelRarity = 15,
+	tunnelRarity = 10,
 	-- Internal value of level generator, don't touch
 	roomCount = 0
 }
@@ -43,10 +43,14 @@ function Level.generateRoom(x, y, width, height)
 		roomHeight = height
 	end
 
+	if (not Level.checkValidity(startX, startY, roomWidth * 25, roomHeight * 25)) then
+		print("BAD ROOM")
+		Level.generateRoom()
+	end
+
 	-- Put the player right in the upper corner of the dungeon to check the structure
 	Heartbeat.player.x = startX - 25
 	Heartbeat.player.y = startY - 25
-	print(Heartbeat.player.x .. " " .. Heartbeat.player.y)
 
 	-- Later do a thing where it compares against the end of the screen and makes it snug
 	-- Perhaps adjust width/height directly?
@@ -73,11 +77,9 @@ function Level.generateRoom(x, y, width, height)
 				Level.generateTunnel(startX, startY, "left")
 			end
 			if (i == roomWidth and j ~= 1 and j~= roomHeight and math.random(Level.tunnelRarity) == 1) then
-				print("Generating a tunnel on the right...")
 				Level.generateTunnel(startX, startY, "right")
 			end
 			if (j == 1 and i ~= 1 and i ~= roomWidth and math.random(Level.tunnelRarity) == 1) then
-				print("UP TUNNEL")
 				Level.generateTunnel(startX, startY, "up")
 			end
 			if (j == roomHeight and i ~= 1 and i ~= roomWidth and math.random(Level.tunnelRarity) == 1) then
@@ -107,6 +109,10 @@ function Level.generateTunnel(x, y, direction)
 	Heartbeat.removeTile(nil, x, y)
 	Heartbeat.newTile(Ground, x, y)
 	if (direction == "up") then
+		if (not Level.checkValidity(x - 25, y - (25 * tunnelLength+1), 75, tunnelLength * 25)) then
+			print("Bad Up")
+			return
+		end
 		for i=1,tunnelLength do
 			y = y - 25
 			Heartbeat.newTile(Wall, x - 25, y)
@@ -117,6 +123,11 @@ function Level.generateTunnel(x, y, direction)
 		Heartbeat.removeTile(nil, x, y - 25)
 		Heartbeat.newTile(Ground, x, y - 25)
 	elseif (direction == "down") then
+		if (not Level.checkValidity(x - 25, y + (25 * tunnelLength), 75, tunnelLength * 25)) then
+			print("BAd down")
+			return
+		end
+
 		for i=1,tunnelLength do
 			y = y + 25
 			Heartbeat.newTile(Wall, x - 25, y)
@@ -157,13 +168,14 @@ function Level.generateTunnel(x, y, direction)
 			Heartbeat.newTile(Wall, x, y + 25)
 		end
 
-		print("MAking new room at " .. x + (25 * roomWidth) .. " " .. y - (math.random(roomHeight-2) * 25))
 		Level.generateRoom(x, y - (math.random(roomHeight-2) * 25), roomWidth, roomHeight)
 	end
 end
 
 -- checkValidity: Returns true if a given structure isn't conflicting with already placed tiles
 function Level.checkValidity(x, y, width, height)
+	width = width + x
+	height = height + y
 	for i=x,width do
 		for j=y,height do
 			if (Heartbeat.getTile(i, j) ~= nil) then
