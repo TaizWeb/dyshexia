@@ -45,7 +45,12 @@ function Level.generateRoom(x, y, width, height)
 
 	if (not Level.checkValidity(startX, startY, roomWidth * 25, roomHeight * 25)) then
 		print("BAD ROOM")
-		Level.generateRoom()
+		print("Room at " .. startX .. " " .. startY .. " with dimensions " .. roomWidth * 25 .. " " .. roomHeight * 25)
+		return
+		--Level.generateRoom()
+	else
+		print("Validity check passed, generating room")
+		print("Room at " .. startX .. " " .. startY .. " with dimensions " .. roomWidth * 25 .. " " .. roomHeight * 25)
 	end
 
 	-- Put the player right in the upper corner of the dungeon to check the structure
@@ -176,15 +181,22 @@ end
 function Level.checkValidity(x, y, width, height)
 	width = width + x
 	height = height + y
-	for i=x,width do
-		for j=y,height do
-			if (Heartbeat.getTile(i, j) ~= nil) then
-				return false
-			end
-			j = j + 25
-		end
-		i = i + 25
+	--for i=x,width do
+		--for j=y,height do
+			--if (Heartbeat.getTile(i, j) ~= nil) then
+				--return false
+			--end
+			--j = j + 25
+		--end
+		--i = i + 25
+	--end
+	if (Heartbeat.getTile(x, y) ~= nil or
+		Heartbeat.getTile(width, height) ~= nil or
+		Heartbeat.getTile(x, height) ~= nil or
+		Heartbeat.getTile(width, y) ~= nil) then
+		return false
+	else
+		return true
 	end
-	return true
 end
 
