@@ -128,7 +128,7 @@ function Level.generateTunnel(x, y, direction)
 	-- Place tunnels are proper locations for the four cardinal directions
 	-- There's probably a cleaner way of doing this as well
 	if (direction == "up") then
-		if (not Level.checkValidity(x - 25, y - (25 * tunnelLength+1), 75, tunnelLength * 25)) then
+		if (not Level.checkValidity(x - 25, y - (25 * tunnelLength+1), 75, tunnelLength * 25) and not Level.checkRoomConflict(x - 25, y - (25 * tunnelLength+1), 75, tunnelLength * 25)) then
 			print("Bad Up")
 			return
 		end
@@ -149,7 +149,7 @@ function Level.generateTunnel(x, y, direction)
 			Heartbeat.newTile(Wall, x, y)
 		end
 	elseif (direction == "down") then
-		if (not Level.checkValidity(x - 25, y + (25 * tunnelLength), 75, tunnelLength * 25)) then
+		if (not Level.checkValidity(x - 25, y + (25 * tunnelLength), 75, tunnelLength * 25) and not Level.checkRoomConflict(x - 25, y + (25 * tunnelLength), 75, tunnelLength * 25)) then
 			print("BAd down")
 			return
 		end
@@ -168,7 +168,7 @@ function Level.generateTunnel(x, y, direction)
 		end
 	elseif (direction == "left") then
 		-- Validity check
-		if (not Level.checkValidity(x - (25 * tunnelLength), y - 25, tunnelLength * 25, 75)) then
+		if (not Level.checkValidity(x - (25 * tunnelLength), y - 25, tunnelLength * 25, 75) and not Level.checkRoomConflict(x - (25 * tunnelLength), y - 25, tunnelLength * 25, 75)) then
 			print("BAD FIT")
 			return
 		end
@@ -192,7 +192,7 @@ function Level.generateTunnel(x, y, direction)
 			Heartbeat.newTile(Wall, x, y)
 		end
 	elseif (direction == "right") then
-		if (not Level.checkValidity(x + (25 * tunnelLength), y - 25, tunnelLength * 25, 75)) then
+		if (not Level.checkValidity(x + (25 * tunnelLength), y - 25, tunnelLength * 25, 75) and not Level.checkRoomConflict(x + (25 * tunnelLength), y - 25, tunnelLength * 25, 75)) then
 			print("BAD FIT")
 			return
 		end
