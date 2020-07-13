@@ -144,7 +144,6 @@ function Level.generateTunnel(x, y, direction)
 		Heartbeat.removeTile(nil, x, y - 25)
 		Heartbeat.newTile(Ground, x, y - 25)
 		if (Heartbeat.getTile(x, y - 50) == nil) then
-			print("DEBUG: Room didn't generate at " .. x .. " " .. y-50)
 			Heartbeat.removeTile(nil, x, y - 25)
 			Heartbeat.removeTile(nil, x, y)
 			Heartbeat.newTile(Wall, x, y)
@@ -162,6 +161,11 @@ function Level.generateTunnel(x, y, direction)
 			Heartbeat.newTile(Wall, x + 25, y)
 		end
 		Level.generateRoom(x - (math.random(roomWidth-2) * 25), y, roomWidth, roomHeight)
+		if (Heartbeat.getTile(x, y + 50) == nil) then
+			Heartbeat.removeTile(nil, x, y + 25)
+			Heartbeat.removeTile(nil, x, y)
+			Heartbeat.newTile(Wall, x, y)
+		end
 	elseif (direction == "left") then
 		-- Validity check
 		if (not Level.checkValidity(x - (25 * tunnelLength), y - 25, tunnelLength * 25, 75)) then
@@ -182,6 +186,11 @@ function Level.generateTunnel(x, y, direction)
 		-- Swap out the wall for ground
 		Heartbeat.removeTile(nil, x - 25, y)
 		Heartbeat.newTile(Ground, x - 25, y)
+		if (Heartbeat.getTile(x - 50, y) == nil) then
+			Heartbeat.removeTile(nil, x - 25, y)
+			Heartbeat.removeTile(nil, x, y)
+			Heartbeat.newTile(Wall, x, y)
+		end
 	elseif (direction == "right") then
 		if (not Level.checkValidity(x + (25 * tunnelLength), y - 25, tunnelLength * 25, 75)) then
 			print("BAD FIT")
@@ -196,6 +205,11 @@ function Level.generateTunnel(x, y, direction)
 		end
 
 		Level.generateRoom(x, y - (math.random(roomHeight-2) * 25), roomWidth, roomHeight)
+		if (Heartbeat.getTile(x + 50, y) == nil) then
+			Heartbeat.removeTile(nil, x + 25, y)
+			Heartbeat.removeTile(nil, x, y)
+			Heartbeat.newTile(Wall, x, y)
+		end
 	end
 
 	-- Remove the old wall tile and make it a floor
