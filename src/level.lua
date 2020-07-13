@@ -6,7 +6,7 @@ Level = {
 	minHeight = 5,
 	maxHeight = 15,
 	-- Max rooms in a dungeon
-	maxRooms = 10,
+	maxRooms = 15,
 	-- How often tunnels appear, default 15 (1/15 per tile in room)
 	tunnelRarity = 10,
 	-- Internal value of level generator, don't touch
@@ -46,6 +46,13 @@ function Level.generateRoom(x, y, width, height)
 		roomHeight = height
 	end
 
+	if (not Level.checkValidity(startX, startY, roomWidth * 25, roomHeight * 25) or not Level.checkRoomConflict(startX, startY, roomWidth * 25, roomHeight * 25)) then
+		print("BAD ROOM")
+		print("Room at " .. startX .. " " .. startY .. " with dimensions " .. roomWidth * 25 .. " " .. roomHeight * 25)
+		return
+		--Level.generateRoom()
+	end
+
 	-- Index the rooms for later usage
 	Level.rooms[#Level.rooms+1] = {
 		x = startX,
@@ -54,12 +61,6 @@ function Level.generateRoom(x, y, width, height)
 		height = roomHeight * 25
 	}
 
-	if (not Level.checkValidity(startX, startY, roomWidth * 25, roomHeight * 25) or not Level.checkRoomConflict(startX, startY, roomWidth * 25, roomHeight * 25)) then
-		print("BAD ROOM")
-		print("Room at " .. startX .. " " .. startY .. " with dimensions " .. roomWidth * 25 .. " " .. roomHeight * 25)
-		return
-		--Level.generateRoom()
-	end
 
 	-- Put the player right in the upper corner of the dungeon to check the structure
 	Heartbeat.player.x = startX - 25
@@ -142,6 +143,12 @@ function Level.generateTunnel(x, y, direction)
 		Level.generateRoom(x - (math.random(roomWidth-2) * 25), y - (roomHeight * 25), roomWidth, roomHeight)
 		Heartbeat.removeTile(nil, x, y - 25)
 		Heartbeat.newTile(Ground, x, y - 25)
+		if (Heartbeat.getTile(x, y - 50) == nil) then
+			print("DEBUG: Room didn't generate at " .. x .. " " .. y-50)
+			Heartbeat.removeTile(nil, x, y - 25)
+			Heartbeat.removeTile(nil, x, y)
+			Heartbeat.newTile(Wall, x, y)
+		end
 	elseif (direction == "down") then
 		if (not Level.checkValidity(x - 25, y + (25 * tunnelLength), 75, tunnelLength * 25)) then
 			print("BAd down")
@@ -221,7 +228,7 @@ end
 
 function Level.checkRoomConflict(x, y, width, height)
 	-- This is a base case in the event there's only one room
-	if (#Level.rooms == 1) then
+	if (#Level.rooms <= 1) then
 		return true
 	end
 
@@ -233,10 +240,10 @@ function Level.checkRoomConflict(x, y, width, height)
 	}
 	for i=1,#Level.rooms do
 		local room2 = {
-			x = Level.rooms[1].x,
-			y = Level.rooms[1].y,
-			width = Level.rooms[1].width,
-			height = Level.rooms[1].height
+			x = Level.rooms[i].x,
+			y = Level.rooms[i].y,
+			width = Level.rooms[i].width,
+			height = Level.rooms[i].height
 		}
 		-- I'm being a sh*tbag here using the entity function
 		if (Heartbeat.checkEntityCollision(room1, room2)) then
