@@ -52,11 +52,9 @@ end
 
 -- moveEntity: Moves an entity in a given direction assuming there's no obstruction
 function moveEntity(this, direction)
-	-- I'd like to make this more clever at some point, for example by not having tile/entity be defined in different ways four different times
-	-- Perhaps have the dimensions to check entity/tile in the if statements, then do the checks all in the same line?
-	-- For now, this will do, despite not being DRY
 	local attemptedX = this.x
 	local attemptedY = this.y
+	this.forwardFace = true
 
 	-- Directional checking and setting proper textures
 	if (direction == "left") then
@@ -66,15 +64,12 @@ function moveEntity(this, direction)
 	elseif (direction == "right") then
 		attemptedX = this.x + 25
 		this.texture = this.textures.side
-		this.forwardFace = true
 	elseif (direction == "up") then
 		attemptedY = this.y - 25
 		this.texture = this.textures.back
-		this.forwardFace = true
 	elseif (direction == "down") then
 		attemptedY = this.y + 25
 		this.texture = this.textures.front
-		this.forwardFace = true
 	end
 
 	-- Making sure no collisions in the attempted movement
