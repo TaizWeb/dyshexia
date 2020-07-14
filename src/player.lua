@@ -57,10 +57,21 @@ function Player.checkVision()
 		while (startY < endY) do
 			-- If the tile is in the radius, make it visible
 			local tile = Heartbeat.getTile(startX, startY)
+			local entity = Heartbeat.getEntity(startX, startY)
+			local item = Heartbeat.getItem(startX, startY)
 			if (tile ~= nil) then
 				tile.scaleX = 25/16
 				tile.scaleY = 25/16
 			end
+			if (entity ~= nil) then
+				entity.scaleX = 2
+				entity.scaleY = 2
+			end
+			if (item ~= nil) then
+				item.scaleX = 25/16
+				item.scaleY = 25/16
+			end
+
 			startY = startY + 25
 		end
 		startX = startX + 25
