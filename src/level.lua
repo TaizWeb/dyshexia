@@ -9,6 +9,10 @@ Level = {
 	maxRooms = 15,
 	-- How often tunnels appear, default 15 (1/15 per tile in room)
 	tunnelRarity = 10,
+	-- How often loot appears, default is 20 (1/20 chance for a floor tile to have loot)
+	lootChance = 20,
+	-- How often enemies appear, default is 40 (1/40 chance per tile)
+	enemyChance = 40,
 	-- Internal value of level generator, don't touch
 	roomCount = 0,
 	-- Indexing the rooms. Used for item placement and conflict checking
@@ -17,6 +21,17 @@ Level = {
 }
 -- TODO: Add a tunnel length min/max
 math.randomseed(os.time())
+
+function Level.generateLevel()
+	Level.generateRoom()
+	Level.generateStairs()
+	Level.generatePlayer()
+end
+
+function Level.clear()
+	Level.roomCount = 0
+	Level.rooms = {}
+end
 
 -- generateRoom: Generates a single square room
 -- Parameters: x/y for room location (optional), width/height for custom dimensions (in terms of tiles, so 100 pixels should be 4) (optional)
@@ -50,7 +65,6 @@ function Level.generateRoom(x, y, width, height)
 		print("BAD ROOM")
 		print("Room at " .. startX .. " " .. startY .. " with dimensions " .. roomWidth * 25 .. " " .. roomHeight * 25)
 		return
-		--Level.generateRoom()
 	end
 
 	-- Index the rooms for later usage
@@ -61,20 +75,6 @@ function Level.generateRoom(x, y, width, height)
 		height = roomHeight * 25
 	}
 
-
-	-- Put the player right in the upper corner of the dungeon to check the structure
-	Heartbeat.player.x = startX - 25
-	Heartbeat.player.y = startY - 25
-
-	-- Later do a thing where it compares against the end of the screen and makes it snug
-	-- Perhaps adjust width/height directly?
-	-- Make sure the room doesn't go out of the level bounds
-	--if ((endX - (roomWidth * 25) <= 0) or (endY - (roomHeight * 25) <= 0)) then
-		--print("I happend")
-		--Level.generateRoom(width, height)
-		--return
-	--end
-
 	-- Making the room (square)
 	for j=1,roomHeight do
 		for i=1,roomWidth do
@@ -84,6 +84,8 @@ function Level.generateRoom(x, y, width, height)
 				Heartbeat.newTile(Wall, startX, startY)
 			else
 				Heartbeat.newTile(Ground, startX, startY)
+				Level.generateLoot(startX, startY)
+				Level.generateEnemy(startX, startY)
 			end
 
 			-- Generate the tunnels. There's a cleaner way of doing this but fuck it
@@ -267,5 +269,40 @@ function Level.checkRoomConflict(x, y, width, height)
 	end
 
 	return true
+end
+
+function Level.generateLoot(x, y)
+	if (math.random(Level.lootChance) == 1) then
+		Heartbeat.newItem(Coin, x, y)
+	end
+end
+
+function Level.generateEnemy(x, y)
+	if (math.random(Level.enemyChance) == 1) then
+		Heartbeat.newEntity(Zombie, x, y)
+	end
+end
+
+function Level.generateStairs()
+	local stairRoom = math.random(#Level.rooms)
+	local stairX = Level.rooms[stairRoom].x + math.floor(math.random(Level.rooms[stairRoom].width) / 25) * 25
+	local stairY = Level.rooms[stairRoom].y + math.floor(math.random(Level.rooms[stairRoom].height) / 25) * 25
+	if (Heartbeat.getTile(stairX, stairY).isSolid) then
+		Level.generateStairs()
+	else
+		Heartbeat.newItem(Ladder, stairX, stairY)
+	end
+end
+
+function Level.generatePlayer()
+	local playerRoom = math.random(#Level.rooms)
+	local playerX = Level.rooms[playerRoom].x + math.floor(math.random(Level.rooms[playerRoom].width) / 25) * 25
+	local playerY = Level.rooms[playerRoom].y + math.floor(math.random(Level.rooms[playerRoom].height) / 25) * 25
+	if (Heartbeat.getTile(playerX, playerY).isSolid) then
+		Level.generatePlayer()
+	else
+		Heartbeat.player.x = playerX
+		Heartbeat.player.y = playerY
+	end
 end
 
