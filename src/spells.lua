@@ -10,8 +10,8 @@ Spells.element.fire = {
 	id = "fire",
 	damageType = "fire",
 	texture = love.graphics.newImage("assets/spells/fire.png"),
-	scaleX = 3,
-	scaleY = 3,
+	scaleX = 2,
+	scaleY = 2,
 	offsetX = 0,
 	offsetY = 0
 }
