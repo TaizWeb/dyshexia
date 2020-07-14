@@ -55,40 +55,34 @@ function moveEntity(this, direction)
 	-- I'd like to make this more clever at some point, for example by not having tile/entity be defined in different ways four different times
 	-- Perhaps have the dimensions to check entity/tile in the if statements, then do the checks all in the same line?
 	-- For now, this will do, despite not being DRY
-	local tile
-	local entity
+	local attemptedX = this.x
+	local attemptedY = this.y
+
+	-- Directional checking and setting proper textures
 	if (direction == "left") then
-		tile = Heartbeat.getTile(this.x - 10, this.y)
-		entity = Heartbeat.getEntity(this.x - 10, this.y)
-		if ((tile == nil or not tile.isSolid) and entity == nil) then
-			this.x = this.x - 25
-		end
+		attemptedX = this.x - 25
 		this.texture = this.textures.side
 		this.forwardFace = false
 	elseif (direction == "right") then
-		tile = Heartbeat.getTile(this.x + this.width + 10, this.y)
-		entity = Heartbeat.getEntity(this.x + this.width + 10, this.y)
-		if ((tile == nil or not tile.isSolid) and entity == nil) then
-			this.x = this.x + 25
-		end
+		attemptedX = this.x + 25
 		this.texture = this.textures.side
 		this.forwardFace = true
 	elseif (direction == "up") then
-		tile = Heartbeat.getTile(this.x, this.y - 10)
-		entity = Heartbeat.getEntity(this.x, this.y - 10)
-		if ((tile == nil or not tile.isSolid) and entity == nil) then
-			this.y = this.y - 25
-		end
+		attemptedY = this.y - 25
 		this.texture = this.textures.back
 		this.forwardFace = true
 	elseif (direction == "down") then
-		tile = Heartbeat.getTile(this.x, this.y + this.height + 10)
-		entity = Heartbeat.getEntity(this.x, this.y + this.height + 10)
-		if ((tile == nil or not tile.isSolid) and entity == nil) then
-			this.y = this.y + 25
-		end
+		attemptedY = this.y + 25
 		this.texture = this.textures.front
 		this.forwardFace = true
+	end
+
+	-- Making sure no collisions in the attempted movement
+	local tile = Heartbeat.getTile(attemptedX, attemptedY)
+	local entity = Heartbeat.getEntity(attemptedX, attemptedY)
+	if ((tile == nil or not tile.isSolid) and entity == nil) then
+		this.x = attemptedX
+		this.y = attemptedY
 	end
 
 	-- Store the direction away for later usage
@@ -172,7 +166,7 @@ function love.draw()
 			Spells.animationTarget()
 		end
 	end
-	
+
 	-- Draw menu
 	if (isPaused) then
 		Menu.drawMenu()
