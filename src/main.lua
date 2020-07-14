@@ -18,8 +18,8 @@ function love.load()
 	love.filesystem.setIdentity("dyslexia")
 	windowWidth = love.graphics.getWidth()
 	windowHeight = love.graphics.getHeight()
-	Heartbeat.levelWidth = windowWidth
-	Heartbeat.levelHeight = windowHeight
+	Heartbeat.levelWidth = 9001
+	Heartbeat.levelHeight = 9001
 	-- Making gravity 0 as this is top-down
 	Heartbeat.gravity = 0
 	-- Make Heartbeat snap to grid for entities/items
@@ -36,7 +36,7 @@ function love.load()
 		Heartbeat.tilesList[i].scaleY = 0
 	end
 
-	Heartbeat.editor.readLevel("level1")
+	Level.generateLevel()
 
 	isPaused = false
 end
@@ -103,9 +103,9 @@ function isAdjacent(entity, target)
 end
 
 function love.keypressed(key, scancode, isrepeat)
-	if (key == "g") then
-		Level.generateRoom(1200, 1200)
-	end
+	--if (key == "g") then
+		--Level.generateLevel()
+	--end
 	-- Toggle editor
 	if (key == "e" and not Heartbeat.editor.commandMode) then
 		Heartbeat.editor.isActive = not Heartbeat.editor.isActive
