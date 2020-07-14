@@ -30,10 +30,19 @@ function love.load()
 	Heartbeat.tilesList = {Wall, Ground}
 	Heartbeat.entitiesList = {Zombie, Skeleton}
 	Heartbeat.itemsList = {Coin, Scroll, Ladder}
-	-- A cheap way to make tiles "invisible" before the player sees them
+
+	-- A cheap way to make everything "invisible" before the player sees them
 	for i=1,#Heartbeat.tilesList do
 		Heartbeat.tilesList[i].scaleX = 0
 		Heartbeat.tilesList[i].scaleY = 0
+	end
+	for i=1,#Heartbeat.entitiesList do
+		Heartbeat.entitiesList[i].scaleX = 0
+		Heartbeat.entitiesList[i].scaleY = 0
+	end
+	for i=1,#Heartbeat.itemsList do
+		Heartbeat.itemsList[i].scaleX = 0
+		Heartbeat.itemsList[i].scaleY = 0
 	end
 
 	Level.generateLevel()
