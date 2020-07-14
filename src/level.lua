@@ -1,3 +1,6 @@
+-- This is my level generation. If you've come here looking for "inspiration" for your own, this isn't the place to look.
+-- Rather, you should go with a binary tree approach, there's plenty of tutorials on doing this
+-- Had I known about it prior to making this monstrocity, I'd have used it. I may rewrite this whole thing in the future
 -- TODO: Add tunnel length to Level config and set tilesets/enemytypes/loottables for each "dungeon"
 Level = {
 	-- Individual room min/max dimensions
