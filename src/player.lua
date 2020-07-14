@@ -7,7 +7,7 @@ Player = {
 	},
 	height = 25,
 	width = 25,
-	health = 50,
+	health = 200,
 	spell = {
 		element = "fire",
 		pattern = "burst"
@@ -39,7 +39,8 @@ end
 
 function Player.drawUI()
 	love.graphics.print("Health: " .. Heartbeat.player.health)
-	love.graphics.print("\n/G/old:" .. Player.money)
+	love.graphics.print("\n/G/old: " .. Player.money)
+	love.graphics.print("\n\nLevel: " .. Player.currentLevel)
 end
 
 function Player.checkVision()
