@@ -76,8 +76,16 @@ function moveEntity(this, direction)
 	local tile = Heartbeat.getTile(attemptedX, attemptedY)
 	local entity = Heartbeat.getEntity(attemptedX, attemptedY)
 	if ((tile == nil or not tile.isSolid) and entity == nil) then
-		this.x = attemptedX
-		this.y = attemptedY
+		--if (this.movementX ~= nil and this.movementY ~= nil) then
+			--this.x = this.movementX
+			--this.y = this.movementY
+			--print("SKIPPING ANIMATION: " .. this.x .. " " .. this.y)
+		--end
+		this.movementX = attemptedX
+		this.movementY = attemptedY
+		--animateMovement(this, attemptedX, attemptedY)
+		--this.x = attemptedX
+		--this.y = attemptedY
 	end
 
 	-- Store the direction away for later usage
@@ -100,6 +108,22 @@ function isAdjacent(entity, target)
 	end
 end
 
+function animateMovement(this)
+	-- A nil check in case it's the "first" turn
+	if (this.movementX == nil or this.movementY == nil) then return end
+
+	-- Easing the player
+	if (this.x ~= this.movementX) then
+		-- This is a really clever way I came up with to move the entity 1 pixel over, without knowing if it's negative/positive
+		local diffX = this.movementX - this.x
+		this.x = this.x + (math.abs(diffX)/diffX)
+	end
+	if (this.y ~= this.movementY) then
+		local diffY = this.movementY - this.y
+		this.y = this.y + (math.abs(diffY)/diffY)
+	end
+end
+
 function love.keypressed(key, scancode, isrepeat)
 	--if (key == "g") then
 		--Level.generateLevel()
@@ -117,17 +141,19 @@ function love.keypressed(key, scancode, isrepeat)
 		if (key == "left" or key == "right" or key == "up" or key == "down") then
 			moveEntity(Heartbeat.player, key)
 		end
-		-- Skip turn
+		-- Cast
 		if (key == "z") then
 			Player.cast()
 			Heartbeat.doEntities()
 		end
 	end
 
+	-- Pause the game
 	if (key == "return") then
 		isPaused = not isPaused
 	end
 
+	-- Handle keys if the menu is open
 	if (isPaused) then
 		Menu.handleKey(key)
 	end
@@ -146,6 +172,17 @@ function love.update(dt)
 		end
 		if (love.mouse.isDown(2)) then
 			Heartbeat.editor.handleInput(2)
+		end
+	else
+		if ((Heartbeat.player.movementX ~= Heartbeat.player.x) or (Heartbeat.player.movementY ~= Heartbeat.player.y)) then
+			animateMovement(Heartbeat.player)
+		end
+		-- Perform animation checks
+		for i=1,#Heartbeat.entities do
+			if ((Heartbeat.entities[i].movementX ~= Heartbeat.entities[i].x) or
+				(Heartbeat.entities[i].movementY ~= Heartbeat.entities[i].y)) then
+				animateMovement(Heartbeat.entities[i])
+			end
 		end
 	end
 end
