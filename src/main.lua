@@ -14,10 +14,15 @@ require("items/ladder")
 function love.load()
 	-- Basic setup for love/Heartbeat
 	love.window.setTitle("Dyshexia")
-	love.keyboard.setKeyRepeat(true)
 	love.filesystem.setIdentity("dyslexia")
+	love.keyboard.setKeyRepeat(true)
 	windowWidth = love.graphics.getWidth()
 	windowHeight = love.graphics.getHeight()
+	-- Global scales, this is for different screen resolutions
+	-- I do this by round numbers otherwise the graphics get choppy and uneven
+	globalScaleX = math.floor(windowWidth / 800)
+	globalScaleY = math.floor(windowHeight / 600)
+	-- Setting level dimensions
 	Heartbeat.levelWidth = 9001
 	Heartbeat.levelHeight = 9001
 	-- Making gravity 0 as this is top-down
@@ -151,6 +156,9 @@ function love.update(dt)
 end
 
 function love.draw()
+	-- Scale the graphics to accomodate larger screens
+	love.graphics.scale(globalScaleX, globalScaleY)
+	-- Get heartbeat running
 	Heartbeat.beat()
 	-- Do spell animations
 	if (Spells.animationActive) then
