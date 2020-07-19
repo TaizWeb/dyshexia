@@ -13,16 +13,6 @@ Spells.element.fire = {
 	offsetY = 0
 }
 
-Spells.element.fire = {
-	id = "fire",
-	damageType = "fire",
-	texture = love.graphics.newImage("assets/spells/fire.png"),
-	scaleX = 2,
-	scaleY = 2,
-	offsetX = 0,
-	offsetY = 0
-}
-
 Spells.element.pepper = {
 	id = "pepper",
 	damageType = "pepper",
