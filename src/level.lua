@@ -12,6 +12,11 @@ Level = {
 	maxRooms = 15,
 	-- How often tunnels appear, default 15 (1/15 per tile in room)
 	tunnelRarity = 10,
+	-- This is the loot table. To the right is the chance of loot spawning, so 40 would mean 1/40 per tile. The left is the item itself
+	loot = {
+		coin = 20,
+		scroll = 50
+	},
 	-- How often loot appears, default is 20 (1/20 chance for a floor tile to have loot)
 	lootChance = 20,
 	-- How often enemies appear, default is 40 (1/40 chance per tile)
@@ -275,8 +280,18 @@ function Level.checkRoomConflict(x, y, width, height)
 end
 
 function Level.generateLoot(x, y)
-	if (math.random(Level.lootChance) == 1) then
-		Heartbeat.newItem(Coin, x, y)
+	-- Loop over the loot table, and roll the loot's chances
+	local chosenLoot = nil
+	for k,v in pairs(Level.loot) do
+		if (math.random(v) == 1) then
+			chosenLoot = k
+			break
+		end
+	end
+
+	-- If a loot was chosen, place it in the world
+	if (chosenLoot ~= nil) then
+		Heartbeat.newItem(Heartbeat.lookupItem(chosenLoot), x, y)
 	end
 end
 
