@@ -5,6 +5,7 @@ require("tiles")
 require("level")
 require("spells")
 require("menu")
+require("animation")
 require("entities/skeleton")
 require("entities/zombie")
 require("items/coin")
@@ -161,14 +162,7 @@ function love.draw()
 	-- Get heartbeat running
 	Heartbeat.beat()
 	-- Do spell animations
-	if (Spells.animationActive) then
-		Spells.animationTimer = Spells.animationTimer - 1
-		if (Spells.animationTimer == 0) then
-			Spells.animationActive = false
-		else
-			Spells.animationTarget()
-		end
-	end
+	Animation.doAnimations()
 
 	-- Draw menu
 	if (isPaused) then
