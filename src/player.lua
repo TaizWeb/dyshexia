@@ -10,7 +10,7 @@ Player = {
 	health = 200,
 	spell = {
 		element = "fire",
-		pattern = "burst"
+		pattern = "ball"
 	},
 	money = 0,
 	currentLevel = 1
@@ -79,17 +79,24 @@ function Player.checkVision()
 end
 
 function Player.cast()
+	-- Giving Spells the "origin" of the spell
+	Spells.x = Heartbeat.player.x
+	Spells.y = Heartbeat.player.y
 	if (Player.spell.element ~= nil and Player.spell.pattern ~= nil) then
 		if (Heartbeat.player.direction == "up") then
-			Spells.pattern[Player.spell.pattern].use(Heartbeat.player.x, Heartbeat.player.y - 25)
+			Spells.y = Spells.y - 25
 		elseif (Heartbeat.player.direction == "down") then
-			Spells.pattern[Player.spell.pattern].use(Heartbeat.player.x, Heartbeat.player.y + 25)
+			Spells.y = Spells.y + 25
 		elseif (Heartbeat.player.direction == "right") then
-			Spells.pattern[Player.spell.pattern].use(Heartbeat.player.x + 25, Heartbeat.player.y)
+			Spells.x = Spells.x + 25
 		else
-			Spells.pattern[Player.spell.pattern].use(Heartbeat.player.x - 25, Heartbeat.player.y)
+			Spells.x = Spells.x - 25
 		end
 	end
+
+	-- Cast the spell, calling the pattern the player currently has
+	Spells.direction = Heartbeat.player.direction
+	Spells.pattern[Player.spell.pattern].use()
 end
 
 function Player.onDeath()
