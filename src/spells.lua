@@ -31,6 +31,10 @@ Spells.pattern.ball = {
 	id = "ball"
 }
 
+Spells.pattern.strike = {
+	id = "strike"
+}
+
 function Spells.pattern.burst.use()
 	Animation.newAnimation(burstAnimation, 60)
 	-- TODO: Add weakness/resist and a helper function for HP
@@ -77,6 +81,29 @@ function Spells.pattern.ball.use()
 		Animation.newAnimation(ballAnimation, (Spells.x - x) / 5)
 	else
 		Animation.newAnimation(ballAnimation, -1 * (Spells.x - x) / 5)
+	end
+end
+
+function Spells.pattern.strike.use()
+	-- TODO: Potentially add a way to "choose" the closest entity to the player
+	-- Where the radius check will start
+	local startX = Heartbeat.player.x - 50
+	local startY = Heartbeat.player.y - 50
+	
+	-- Checking all around the player in a two tile radius
+	for i=0,4 do
+		for j=0,4 do
+			local entity = Heartbeat.getEntity(startX + (i * 25), startY + (j * 25))
+			if (entity ~= nil) then
+				Heartbeat.updateEntityHealth(entity, entity.health - 5)
+				-- Since strike doesn't currently do anything fancy
+				-- We can simply reuse the burst animation
+				Spells.x = entity.x
+				Spells.y = entity.y
+				Animation.newAnimation(burstAnimation, 30)
+				return
+			end
+		end
 	end
 end
 
