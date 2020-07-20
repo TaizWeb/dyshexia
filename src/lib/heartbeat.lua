@@ -273,7 +273,8 @@ function Heartbeat.newItem(object, x, y)
 			texture = object.texture,
 			scaleX = object.scaleX,
 			scaleY = object.scaleY,
-			onPickup = object.onPickup
+			onPickup = object.onPickup,
+			onUse = object.onUse
 		}
 	end
 end
@@ -841,6 +842,7 @@ function Heartbeat.editor.readLevel(levelName)
 			height = item.height,
 			width = item.width,
 			onPickup = item.onPickup,
+			onUse = object.onUse,
 			texture = item.texture,
 			scaleX = item.scaleX,
 			scaleY = item.scaleY,
