@@ -13,7 +13,10 @@ Menu = {
 	-- Tracking which menu is open for up/down key movement
 	currentMenu = "Main",
 	-- Tracking which pages are to be combined together
-	combinedPages = {}
+	combinedPages = {
+		pattern = nil,
+		element = nil
+	}
 }
 
 -- Main menu, this displays the options like the inventory
@@ -63,13 +66,16 @@ function Menu.handleKey(key)
 		if (Menu.currentMenu == "Main") then
 			Menu.currentMenu = Menu.menuElements[Menu.selection]
 		elseif (Menu.currentMenu == "Inventory") then
-			local itemName = Heartbeat.player.inventory[Menu.itemSelection].name
-			-- Quickly check if the item is a spell or pattern
-			if (split(itemName, " ")[2] == "pattern"
-				or split(itemName, " ")[2] == "element") then
-				print("This is a spell, for sure!")
-				Menu.promptUsage = true
+			if (Menu.promptUsage) then
+				Menu.useItem(Heartbeat.player.inventory[Menu.itemSelection])
 			end
+			Menu.promptUsage = true
+			--local itemName = Heartbeat.player.inventory[Menu.itemSelection].name
+			---- Quickly check if the item is a spell or pattern
+			--if (split(itemName, " ")[2] == "pattern"
+				--or split(itemName, " ")[2] == "element") then
+				--print("This is a spell, for sure!")
+			--end
 		end
 	end
 
@@ -81,6 +87,47 @@ function Menu.handleKey(key)
 			Menu.currentMenu = "Main"
 		end
 	end
+end
+
+-- useItem: Triggers usage of an item
+function Menu.useItem(item)
+	if (Menu.currentMenu == "Inventory") then
+		print("Using " .. item.name)
+		-- Checking if it's a page
+		if (split(item.name, " ")[2] == "pattern"
+			or split(item.name, " ")[2] == "element") then
+			local spellData = split(item.name, " ")
+			if (Menu.combineSpells(spellData[1], spellData[2])) then
+				--Heartbeat.player.removeInventoryItem(item)
+				--Menu.itemSelection = Menu.itemSelection - 1
+			end
+		end
+	end
+end
+
+function Menu.combineSpells(spellName, spellType)
+	-- Checking the parts of the spell
+	if (Menu.combinedPages.pattern == nil and spellType == "pattern") then
+		Menu.combinedPages.pattern = spellName
+	elseif(Menu.combinedPages.element == nil and spellType == "element") then
+		Menu.combinedPages.element = spellName
+	else
+		print("Spell not used!")
+		return false
+	end
+
+	-- If they're all set, combine the spells
+	if (Menu.combinedPages.element ~= nil and
+		Menu.combinedPages.pattern ~= nil) then
+		Player.spell.element = Menu.combinedPages.element
+		Player.spell.pattern = Menu.combinedPages.pattern
+		Menu.combinedPages.element = nil
+		Menu.combinedPages.pattern = nil
+		print("Spell created!")
+	else
+		print("Still needs more data!")
+	end
+	return true
 end
 
 function Menu.drawMenu()
@@ -181,9 +228,9 @@ function Menu.drawUsage()
 	love.graphics.print(discardContext, useDialog.x + 10, useDialog.y + 30)
 end
 
-function combineSpells(scroll1, scroll2)
-	print(scroll1.name)
-	print(scroll2.name)
+--function combineSpells(scroll1, scroll2)
+	--print(scroll1.name)
+	--print(scroll2.name)
 	--local scroll1Type = split(Heartbeat.player.inventory[scroll1].name, " ")[2]
 	--local scroll2Type = split(Heartbeat.player.inventory[scroll2].name, " ")[2]
 	--if (scroll1Type == "element") then
@@ -195,5 +242,5 @@ function combineSpells(scroll1, scroll2)
 	--end
 	--print(Player.spell.element)
 	--print(Player.spell.pattern)
-end
+--end
 
