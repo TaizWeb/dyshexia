@@ -323,7 +323,11 @@ end
 function Heartbeat.player.removeInventoryItem(item)
 	local inventoryIndex = Heartbeat.player.hasInventoryItem(item)
 	if (inventoryIndex ~= -1) then
-		table.remove(Heartbeat.player.inventory, inventoryIndex)
+		if (Heartbeat.player.inventory[inventoryIndex].count > 1) then
+			Heartbeat.player.inventory[inventoryIndex].count = Heartbeat.player.inventory[inventoryIndex].count - 1
+		else
+			table.remove(Heartbeat.player.inventory, inventoryIndex)
+		end
 	else
 		print("Heartbeat Error: Player has no item of id '" .. item.id .."'")
 	end
