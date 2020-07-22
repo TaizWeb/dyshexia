@@ -68,20 +68,18 @@ function Menu.handleKey(key)
 		elseif (Menu.currentMenu == "Inventory") then
 			if (Menu.promptUsage) then
 				Menu.useItem(Heartbeat.player.inventory[Menu.itemSelection])
+				Menu.promptUsage = false
+			else
+				Menu.promptUsage = true
 			end
-			Menu.promptUsage = true
-			--local itemName = Heartbeat.player.inventory[Menu.itemSelection].name
-			---- Quickly check if the item is a spell or pattern
-			--if (split(itemName, " ")[2] == "pattern"
-				--or split(itemName, " ")[2] == "element") then
-				--print("This is a spell, for sure!")
-			--end
 		end
 	end
 
 	-- Back
 	if (key == "x") then
-		if (Menu.currentMenu == "Main") then
+		if (Menu.promptUsage) then
+			Menu.promptUsage = false
+		elseif (Menu.currentMenu == "Main") then
 			isPaused = false
 		else
 			Menu.currentMenu = "Main"
@@ -98,8 +96,7 @@ function Menu.useItem(item)
 			or split(item.name, " ")[2] == "element") then
 			local spellData = split(item.name, " ")
 			if (Menu.combineSpells(spellData[1], spellData[2])) then
-				--Heartbeat.player.removeInventoryItem(item)
-				--Menu.itemSelection = Menu.itemSelection - 1
+				Heartbeat.player.removeInventoryItem(item)
 			end
 		end
 	end
@@ -107,6 +104,7 @@ end
 
 function Menu.combineSpells(spellName, spellType)
 	-- Checking the parts of the spell
+	-- I could possibly rewrite this to be more clever later
 	if (Menu.combinedPages.pattern == nil and spellType == "pattern") then
 		Menu.combinedPages.pattern = spellName
 	elseif(Menu.combinedPages.element == nil and spellType == "element") then
@@ -201,6 +199,7 @@ end
 
 -- drawUsage: Draws the usage prompt
 function Menu.drawUsage()
+	if (Heartbeat.player.inventory[Menu.itemSelection] == nil) then return end
 	local isSpell = false
 	local useContext = "Use"
 	local discardContext = "Discard"
