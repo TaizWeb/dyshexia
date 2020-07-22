@@ -176,11 +176,11 @@ function Menu.drawItems()
 
 	-- Draw the items to the screen
 	for i=1,#Heartbeat.player.inventory do
-		local itemName = Heartbeat.player.inventory[i].name
+		local itemName = Heartbeat.player.inventory[i].name .. " (" .. Heartbeat.player.inventory[i].count .. ")"
+
 		-- Stick an arrow by the current position
 		if (i == Menu.itemSelection) then
-			itemName = "> " .. itemName
-		end
+			itemName = "> " .. itemName		end
 
 		--if (Menu.combinationActive or Menu.combinedPages[1] == Heartbeat.player.inventory[i]) then
 			--love.graphics.setColor(0, 1, 0, 1)
