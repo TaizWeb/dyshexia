@@ -90,14 +90,18 @@ end
 -- useItem: Triggers usage of an item
 function Menu.useItem(item)
 	if (Menu.currentMenu == "Inventory") then
-		print("Using " .. item.name)
 		-- Checking if it's a page
+		item.name = item.name or Heartbeat.lookupItem(item.id).name
 		if (split(item.name, " ")[2] == "pattern"
 			or split(item.name, " ")[2] == "element") then
 			local spellData = split(item.name, " ")
 			if (Menu.combineSpells(spellData[1], spellData[2])) then
 				Heartbeat.player.removeInventoryItem(item)
 			end
+		-- If not, treat it like a normal item
+		else
+			Heartbeat.lookupItem(item.id).onUse()
+			Heartbeat.player.removeInventoryItem(item)
 		end
 	end
 end
@@ -174,24 +178,17 @@ function Menu.drawItems()
 
 	-- Draw the items to the screen
 	for i=1,#Heartbeat.player.inventory do
-		local itemName = Heartbeat.player.inventory[i].name .. " (" .. Heartbeat.player.inventory[i].count .. ")"
+		-- By default, you're supposed to lookup the name with Heartbeat since you have the ID. Since every possible scroll isn't hardcoded, scroll.lua generates the name on it's own, hence the 'or'
+		local itemName = Heartbeat.player.inventory[i].name or Heartbeat.lookupItem(Heartbeat.player.inventory[i].id).name
+		-- Here we add the count to the end of the name
+		itemName = itemName .. " (" .. Heartbeat.player.inventory[i].count .. ")"
 
 		-- Stick an arrow by the current position
 		if (i == Menu.itemSelection) then
-			itemName = "> " .. itemName		end
+			itemName = "> " .. itemName
+		end
 
-		--if (Menu.combinationActive or Menu.combinedPages[1] == Heartbeat.player.inventory[i]) then
-			--love.graphics.setColor(0, 1, 0, 1)
-			--Menu.combinationActive = false
-			--if (Menu.combinedPages[1] == nil) then
-				--Menu.combinedPages[1] = Heartbeat.player.inventory[i]
-			--else
-				--Menu.combinedPages[2] = Heartbeat.player.inventory[i]
-				--combineSpells(Menu.combinedPages[1], Menu.combinedPages[2])
-			--end
-		--else
-			--love.graphics.setColor(1, 1, 1, 1)
-		--end
+		-- Draw the items
 		love.graphics.setColor(1, 1, 1, 1)
 		love.graphics.print(itemName, spellMenu.x + 10, spellMenu.y + (i * 25))
 	end
@@ -207,7 +204,7 @@ function Menu.drawUsage()
 	love.graphics.rectangle('fill', useDialog.x, useDialog.y, useDialog.width, useDialog.height)
 
 	-- Quickly check if the item is a spell or pattern
-	local itemName = Heartbeat.player.inventory[Menu.itemSelection].name
+	local itemName = Heartbeat.player.inventory[Menu.itemSelection].name or Heartbeat.lookupItem(Heartbeat.player.inventory[Menu.itemSelection].id).name
 	if (split(itemName, " ")[2] == "pattern"
 		or split(itemName, " ")[2] == "element") then
 		isSpell = true
@@ -226,20 +223,4 @@ function Menu.drawUsage()
 	love.graphics.print(useContext, useDialog.x + 10, useDialog.y + 10)
 	love.graphics.print(discardContext, useDialog.x + 10, useDialog.y + 30)
 end
-
---function combineSpells(scroll1, scroll2)
-	--print(scroll1.name)
-	--print(scroll2.name)
-	--local scroll1Type = split(Heartbeat.player.inventory[scroll1].name, " ")[2]
-	--local scroll2Type = split(Heartbeat.player.inventory[scroll2].name, " ")[2]
-	--if (scroll1Type == "element") then
-		--Player.spell.element = Heartbeat.player.inventory[scroll1].id
-		--Player.spell.pattern = Heartbeat.player.inventory[scroll2].id
-	--else
-		--Player.spell.pattern = Heartbeat.player.inventory[scroll1].id
-		--Player.spell.element = Heartbeat.player.inventory[scroll2].id
-	--end
-	--print(Player.spell.element)
-	--print(Player.spell.pattern)
---end
 
