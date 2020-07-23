@@ -11,6 +11,7 @@ require("entities/zombie")
 require("items/coin")
 require("items/scroll")
 require("items/ladder")
+require("items/health_potion")
 
 function love.load()
 	-- Basic setup for love/Heartbeat
@@ -35,7 +36,7 @@ function love.load()
 	Heartbeat.player.direction = "down"
 	Heartbeat.tilesList = {Wall, Ground}
 	Heartbeat.entitiesList = {Zombie, Skeleton}
-	Heartbeat.itemsList = {Coin, Scroll, Ladder}
+	Heartbeat.itemsList = {Coin, Scroll, Ladder, HealthPotion}
 
 	-- A cheap way to make everything "invisible" before the player sees them
 	for i=1,#Heartbeat.tilesList do
