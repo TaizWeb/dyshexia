@@ -8,11 +8,11 @@ Ladder = {
 }
 
 function Ladder.onPickup(this)
-	Heartbeat.player.health = 200
 	-- Clear all items/entities/tiles
 	Heartbeat.clear()
 	-- Reset stuff like Level.roomCount
 	Level.clear()
+	-- Create a new level and increment depth count
 	Level.generateLevel()
 	Player.currentLevel = Player.currentLevel + 1
 end
