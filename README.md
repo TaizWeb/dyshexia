@@ -18,4 +18,4 @@ You can then run the project by using `love2d src` while in the directory (which
 I'm going to hold off on this until July 5th when I have the foundation laid out. But as for some ground rules:
 * No racism, I'd rather not end up being known as the guy who made some controversial game
 * Read and abide by the CODE_OF_EXCELLENCY on maintaining yourself in the issue tracker and pull requests
-* This project is licensed under the GPLv3, meaning you can fork it and do whatever you want. Though if you break the above rules in doing so, I'll have no part in it
+* This project is licensed under the MIT, meaning you can fork it and do whatever you want. Though if you break the above rules in doing so, I'll have no part in it
