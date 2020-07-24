@@ -133,6 +133,7 @@ function Heartbeat.newEntity(object, x, y)
 			attack = object.attack,
 			behaivor = object.behaivor,
 			onCollision = object.onCollision,
+			onHit = object.onHit,
 			onDeath = object.onDeath,
 			draw = object.draw,
 			isEnemy = object.isEnemy,
@@ -182,6 +183,9 @@ function Heartbeat.updateEntityHealth(this, value)
 		Heartbeat.removeEntity(this)
 	end
 	this.health = value
+	if (this.onHit ~= nil) then
+		this.onHit(this)
+	end
 end
 
 function Heartbeat.removeEntity(entity)
@@ -827,6 +831,7 @@ function Heartbeat.editor.readLevel(levelName)
 			draw = entity.draw,
 			behaivor = entity.behaivor,
 			onDeath = entity.onDeath,
+			onHit = entity.onHit,
 			isEnemy = entity.isEnemy,
 			onCollision = entity.onCollision,
 			moveLeft = entity.moveleft,
