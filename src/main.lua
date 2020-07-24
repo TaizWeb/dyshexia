@@ -68,15 +68,19 @@ function moveEntity(this, direction)
 		attemptedX = this.x - 25
 		this.texture = this.textures.side
 		this.forwardFace = false
+		this.direction = "left"
 	elseif (direction == Keybinds.right) then
 		attemptedX = this.x + 25
 		this.texture = this.textures.side
+		this.direction = "right"
 	elseif (direction == Keybinds.up) then
 		attemptedY = this.y - 25
 		this.texture = this.textures.back
+		this.direction = "up"
 	elseif (direction == Keybinds.down) then
 		attemptedY = this.y + 25
 		this.texture = this.textures.front
+		this.direction = "down"
 	end
 
 	-- Making sure no collisions in the attempted movement
@@ -86,9 +90,6 @@ function moveEntity(this, direction)
 		this.x = attemptedX
 		this.y = attemptedY
 	end
-
-	-- Store the direction away for later usage
-	this.direction = direction
 
 	-- My turn your turn and update vision
 	if (this == Heartbeat.player) then

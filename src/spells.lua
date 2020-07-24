@@ -124,11 +124,11 @@ function ballAnimation(frame)
 	-- Make the ball fire in the right direciton
 	-- I know I'm sinning here checking direction again but I haven't figured out a better way to do this
 	-- I could just stick it in Spells in the cast functions later to save one more computation
-	if (Spells.direction == Keybinds.up) then
+	if (Spells.direction == "up") then
 		changeY = frame * -5
-	elseif (Spells.direction == Keybinds.down) then
+	elseif (Spells.direction == "down") then
 		changeY = frame * 5
-	elseif (Spells.direction == Keybinds.left) then
+	elseif (Spells.direction == "left") then
 		changeX = frame * -5
 	else
 		changeX = frame * 5
