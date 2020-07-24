@@ -15,7 +15,8 @@ Level = {
 	-- This is the loot table. To the right is the chance of loot spawning, so 40 would mean 1/40 per tile. The left is the item itself
 	loot = {
 		coin = 20,
-		scroll = 50
+		scroll = 70,
+		health_potion = 90
 	},
 	-- How often loot appears, default is 20 (1/20 chance for a floor tile to have loot)
 	lootChance = 20,
