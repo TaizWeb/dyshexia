@@ -23,6 +23,16 @@ Spells.element.pepper = {
 	offsetY = 0
 }
 
+Spells.element.thunder = {
+	id = "thunder",
+	damageType = "thunder",
+	texture = love.graphics.newImage("assets/spells/thunder.png"),
+	scaleX = 2,
+	scaleY = 2,
+	offsetX = 0,
+	offsetY = 0
+}
+
 Spells.pattern.burst = {
 	id = "burst"
 }
@@ -89,7 +99,7 @@ function Spells.pattern.strike.use()
 	-- Where the radius check will start
 	local startX = Heartbeat.player.x - 50
 	local startY = Heartbeat.player.y - 50
-	
+
 	-- Checking all around the player in a two tile radius
 	for i=0,4 do
 		for j=0,4 do
