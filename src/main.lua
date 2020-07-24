@@ -64,17 +64,17 @@ function moveEntity(this, direction)
 	this.forwardFace = true
 
 	-- Directional checking and setting proper textures
-	if (direction == "left") then
+	if (direction == Keybinds.left) then
 		attemptedX = this.x - 25
 		this.texture = this.textures.side
 		this.forwardFace = false
-	elseif (direction == "right") then
+	elseif (direction == Keybinds.right) then
 		attemptedX = this.x + 25
 		this.texture = this.textures.side
-	elseif (direction == "up") then
+	elseif (direction == Keybinds.up) then
 		attemptedY = this.y - 25
 		this.texture = this.textures.back
-	elseif (direction == "down") then
+	elseif (direction == Keybinds.down) then
 		attemptedY = this.y + 25
 		this.texture = this.textures.front
 	end
@@ -121,17 +121,17 @@ function love.keypressed(key, scancode, isrepeat)
 
 	if (not Heartbeat.editor.isActive and not isPaused) then
 		-- Handle movement
-		if (key == "left" or key == "right" or key == "up" or key == "down") then
+		if (key == Keybinds.left or key == Keybinds.right or key == Keybinds.up or key == Keybinds.down) then
 			moveEntity(Heartbeat.player, key)
 		end
 		-- Skip turn
-		if (key == "z") then
+		if (key == Keybinds.action) then
 			Player.cast()
 			Heartbeat.doEntities()
 		end
 	end
 
-	if (key == "return") then
+	if (key == Keybinds.pause) then
 		isPaused = not isPaused
 	end
 

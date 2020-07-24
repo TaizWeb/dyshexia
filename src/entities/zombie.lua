@@ -42,21 +42,25 @@ function Zombie.behaivor(this)
 		Zombie.attack(this)
 	elseif (math.abs(diffX) > math.abs(diffY)) then
 		if (diffX < 0) then
-			moveEntity(this, "left")
+			moveEntity(this, Keybinds.left)
 		else
-			moveEntity(this, "right")
+			moveEntity(this, Keybinds.right)
 		end
 	else
 		if (diffY < 0) then
-			moveEntity(this, "up")
+			moveEntity(this, Keybinds.up)
 		else
-			moveEntity(this, "down")
+			moveEntity(this, Keybinds.down)
 		end
 	end
 end
 
 function Zombie.attack(this)
 	Heartbeat.updateEntityHealth(Heartbeat.player, Heartbeat.player.health - 5)
+end
+
+function Zombie.onHit(this)
+	-- Add a hurt animation here
 end
 
 function Zombie.onDeath(this)

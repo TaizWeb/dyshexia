@@ -46,14 +46,14 @@ local useDialog = {
 
 function Menu.handleKey(key)
 	-- Move the cursor up or down
-	if (key == "down") then
+	if (key == Keybinds.down) then
 		if (Menu.currentMenu == "Main" and Menu.selection < Menu.maxSelection) then
 			Menu.selection = Menu.selection + 1
 		elseif (Menu.currentMenu == "Inventory" and Menu.itemSelection < Menu.itemMaxSelection) then
 			Menu.itemSelection = Menu.itemSelection + 1
 		end
 	end
-	if (key == "up") then
+	if (key == Keybinds.up) then
 		if (Menu.currentMenu == "Main" and Menu.selection > 1) then
 			Menu.selection = Menu.selection - 1
 		elseif (Menu.currentMenu == "Inventory" and Menu.itemSelection > 1) then
@@ -62,7 +62,7 @@ function Menu.handleKey(key)
 	end
 
 	-- Confirm
-	if (key == "z") then
+	if (key == Keybinds.action) then
 		if (Menu.currentMenu == "Main") then
 			Menu.currentMenu = Menu.menuElements[Menu.selection]
 		elseif (Menu.currentMenu == "Inventory") then
@@ -76,7 +76,7 @@ function Menu.handleKey(key)
 	end
 
 	-- Back
-	if (key == "x") then
+	if (key == Keybinds.back) then
 		if (Menu.promptUsage) then
 			Menu.promptUsage = false
 		elseif (Menu.currentMenu == "Main") then
