@@ -39,9 +39,27 @@ function Player.draw(this)
 end
 
 function Player.drawUI()
-	love.graphics.print("Health: " .. Heartbeat.player.health)
-	love.graphics.print("\n/G/old: " .. Player.money)
-	love.graphics.print("\n\nLevel: " .. Player.currentLevel)
+	Player.drawHealthBar()
+	--love.graphics.print("Health: " .. Heartbeat.player.health)
+	love.graphics.print("\n\n/G/old: " .. Player.money)
+	love.graphics.print("\n\n\nLevel: " .. Player.currentLevel)
+end
+
+function Player.drawHealthBar()
+	local barX = 0
+	local barY = 0
+	local barWidth = 100
+	local barHeight = 20
+	local healthFraction = barWidth * (Heartbeat.player.health / Player.maxHealth)
+	-- Drawing the background
+	love.graphics.setColor(1, 1, 1, 1)
+	love.graphics.rectangle("line", barX, barY, barWidth, barHeight)
+	-- Drawing the bar itself
+	love.graphics.setColor(1, 0, 0, 1)
+	love.graphics.rectangle("fill", barX + 1, barY + 1, healthFraction - 1, barHeight - 1)
+	-- Drawing the text
+	love.graphics.setColor(1, 1, 1, 1)
+	love.graphics.print(Heartbeat.player.health .. " / " .. Player.maxHealth, barX, barY)
 end
 
 function Player.checkVision()
