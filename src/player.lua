@@ -7,6 +7,7 @@ Player = {
 	},
 	height = 25,
 	width = 25,
+	maxHealth = 200,
 	health = 200,
 	spell = {
 		element = "fire",
