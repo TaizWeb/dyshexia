@@ -12,6 +12,7 @@ require("items/coin")
 require("items/scroll")
 require("items/ladder")
 require("items/health_potion")
+require("items/chalice")
 
 function love.load()
 	-- Basic setup for love/Heartbeat
@@ -36,7 +37,7 @@ function love.load()
 	Heartbeat.player.direction = "down"
 	Heartbeat.tilesList = {Wall, Ground}
 	Heartbeat.entitiesList = {Zombie, Skeleton}
-	Heartbeat.itemsList = {Coin, Scroll, Ladder, HealthPotion}
+	Heartbeat.itemsList = {Coin, Scroll, Ladder, HealthPotion, Chalice}
 
 	-- A cheap way to make everything "invisible" before the player sees them
 	for i=1,#Heartbeat.tilesList do
@@ -94,6 +95,7 @@ function moveEntity(this, direction)
 	-- My turn your turn and update vision
 	if (this == Heartbeat.player) then
 		Player.checkVision()
+		Player.regenMana()
 		Heartbeat.doEntities()
 	end
 end
