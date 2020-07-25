@@ -8,7 +8,9 @@ Player = {
 	height = 25,
 	width = 25,
 	maxHealth = 200,
+	maxMana = 200,
 	health = 200,
+	mana = 200,
 	spell = {
 		element = "fire",
 		pattern = "ball"
@@ -98,10 +100,11 @@ function Player.checkVision()
 end
 
 function Player.cast()
-	-- Giving Spells the "origin" of the spell
-	Spells.x = Heartbeat.player.x
-	Spells.y = Heartbeat.player.y
-	if (Player.spell.element ~= nil and Player.spell.pattern ~= nil) then
+	-- Ensuring the player has magic equipped and enough mana to use it
+	if (Player.spell.element ~= nil and Player.spell.pattern ~= nil and Player.mana > Spells.pattern[Player.spell.pattern].cost) then
+		Spells.x = Heartbeat.player.x
+		Spells.y = Heartbeat.player.y
+		-- Giving Spells the "origin" of the spell
 		if (Heartbeat.player.direction == "up") then
 			Spells.y = Spells.y - 25
 		elseif (Heartbeat.player.direction == "down") then
@@ -111,11 +114,12 @@ function Player.cast()
 		else
 			Spells.x = Spells.x - 25
 		end
+		-- Cast the spell, calling the pattern the player currently has
+		Spells.direction = Heartbeat.player.direction
+		Spells.pattern[Player.spell.pattern].use()
+		-- Use mana
+		Player.mana = Player.mana - Spells.pattern[Player.spell.pattern].cost
 	end
-
-	-- Cast the spell, calling the pattern the player currently has
-	Spells.direction = Heartbeat.player.direction
-	Spells.pattern[Player.spell.pattern].use()
 end
 
 function Player.onDeath()
