@@ -1,5 +1,6 @@
 Scroll = {
 	id = "scroll",
+	desc = "Part of a spell! I can\ncombine it with\nother pages!",
 	texture = love.graphics.newImage("assets/items/scroll.png"),
 	width = 16,
 	height = 16,
