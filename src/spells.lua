@@ -34,15 +34,18 @@ Spells.element.thunder = {
 }
 
 Spells.pattern.burst = {
-	id = "burst"
+	id = "burst",
+	cost = 5
 }
 
 Spells.pattern.ball = {
-	id = "ball"
+	id = "ball",
+	cost = 10
 }
 
 Spells.pattern.strike = {
-	id = "strike"
+	id = "strike",
+	cost = 15
 }
 
 function Spells.pattern.burst.use()
