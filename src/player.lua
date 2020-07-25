@@ -42,9 +42,10 @@ end
 
 function Player.drawUI()
 	Player.drawHealthBar()
+	Player.drawManaBar()
 	--love.graphics.print("Health: " .. Heartbeat.player.health)
-	love.graphics.print("\n\n/G/old: " .. Player.money)
-	love.graphics.print("\n\n\nLevel: " .. Player.currentLevel)
+	love.graphics.print("\n\n\n\n/G/old: " .. Player.money)
+	love.graphics.print("\n\n\n\n\nLevel: " .. Player.currentLevel)
 end
 
 function Player.drawHealthBar()
@@ -62,6 +63,23 @@ function Player.drawHealthBar()
 	-- Drawing the text
 	love.graphics.setColor(1, 1, 1, 1)
 	love.graphics.print(Heartbeat.player.health .. " / " .. Player.maxHealth, barX, barY)
+end
+
+function Player.drawManaBar()
+	local barX = 0
+	local barY = 25
+	local barWidth = 100
+	local barHeight = 20
+	local manaFraction = barWidth * (Player.mana / Player.maxMana)
+	-- Drawing the background
+	love.graphics.setColor(1, 1, 1, 1)
+	love.graphics.rectangle("line", barX, barY, barWidth, barHeight)
+	-- Drawing the bar itself
+	love.graphics.setColor(0, 0, 1, 1)
+	love.graphics.rectangle("fill", barX + 1, barY + 1, manaFraction - 1, barHeight - 1)
+	-- Drawing the text
+	love.graphics.setColor(1, 1, 1, 1)
+	love.graphics.print(Player.mana .. " / " .. Player.maxMana, barX, barY)
 end
 
 function Player.checkVision()
@@ -101,7 +119,7 @@ end
 
 function Player.cast()
 	-- Ensuring the player has magic equipped and enough mana to use it
-	if (Player.spell.element ~= nil and Player.spell.pattern ~= nil and Player.mana > Spells.pattern[Player.spell.pattern].cost) then
+	if (Player.spell.element ~= nil and Player.spell.pattern ~= nil and Player.mana >= Spells.pattern[Player.spell.pattern].cost) then
 		Spells.x = Heartbeat.player.x
 		Spells.y = Heartbeat.player.y
 		-- Giving Spells the "origin" of the spell
@@ -119,6 +137,13 @@ function Player.cast()
 		Spells.pattern[Player.spell.pattern].use()
 		-- Use mana
 		Player.mana = Player.mana - Spells.pattern[Player.spell.pattern].cost
+	end
+end
+
+-- regenMana: Regens mana, will later depend on buffs
+function Player.regenMana()
+	if (Player.mana < Player.maxMana) then
+		Player.mana = Player.mana + 1
 	end
 end
 
