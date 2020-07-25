@@ -44,6 +44,13 @@ local useDialog = {
 	height = 100
 }
 
+local itemPreview = {
+	x = useDialog.x,
+	y = useDialog.y + useDialog.height + 10,
+	width = 200,
+	height = 100
+}
+
 function Menu.handleKey(key)
 	-- Move the cursor up or down
 	if (key == Keybinds.down) then
@@ -192,6 +199,10 @@ function Menu.drawItems()
 		love.graphics.setColor(1, 1, 1, 1)
 		love.graphics.print(itemName, spellMenu.x + 10, spellMenu.y + (i * 25))
 	end
+
+	if (Heartbeat.player.inventory[Menu.itemSelection] ~= nil) then
+		Menu.drawItemPreview(Heartbeat.player.inventory[Menu.itemSelection])
+	end
 end
 
 -- drawUsage: Draws the usage prompt
@@ -222,5 +233,22 @@ function Menu.drawUsage()
 	love.graphics.setColor(1, 1, 1, 1)
 	love.graphics.print(useContext, useDialog.x + 10, useDialog.y + 10)
 	love.graphics.print(discardContext, useDialog.x + 10, useDialog.y + 30)
+end
+
+function Menu.drawItemPreview(item)
+	local itemData = Heartbeat.lookupItem(item.id)
+	-- A fall back for scrolls since they're dynamically created
+	if (itemData == nil) then
+		itemData = Scroll
+	end
+	-- Draw the window
+	love.graphics.setColor(0, 0, 1, .5)
+	love.graphics.rectangle("fill", itemPreview.x, itemPreview.y, itemPreview.width, itemPreview.height)
+	-- Draw the item preview
+	love.graphics.setColor(1, 1, 1, 1)
+	love.graphics.draw(itemData.texture, itemPreview.x, itemPreview.y + 20, 0, 4, 4)
+	-- Draw the flavor text
+	-- For now this is done by \n's in the desc. Later this will be done to accomodate other screen sizes
+	love.graphics.print(itemData.desc, itemPreview.x + 75, itemPreview.y + 10, 0, 1, 1)
 end
 
