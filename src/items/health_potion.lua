@@ -1,6 +1,7 @@
 HealthPotion = {
 	id = "health_potion",
 	name = "Health Potion",
+	desc = "Tastes like kool-aid!",
 	texture = love.graphics.newImage("assets/items/health_potion.png"),
 	width = 14,
 	height = 16,
