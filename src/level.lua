@@ -35,6 +35,7 @@ function Level.generateLevel()
 	Level.generateRoom()
 	Level.generateStairs()
 	Level.generatePlayer()
+	Player.checkVision()
 end
 
 function Level.clear()
