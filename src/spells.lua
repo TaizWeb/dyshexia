@@ -53,7 +53,7 @@ function Spells.pattern.burst.use()
 	-- TODO: Add weakness/resist and a helper function for HP
 	local entity = Heartbeat.getEntity(Spells.x, Spells.y)
 	if (entity ~= nil) then
-		Heartbeat.updateEntityHealth(entity, entity.health - 5)
+		Dyshexia.updateEntityHealth(entity, -5)
 	end
 end
 
@@ -72,7 +72,7 @@ function Spells.pattern.ball.use()
 		entity = Heartbeat.getEntity(x, y)
 		if (entity ~= nil) then
 			-- Strike them if they collide
-			Heartbeat.updateEntityHealth(entity, entity.health - 5)
+			Dyshexia.updateEntityHealth(entity, -5)
 		end
 		-- I want to do this better too
 		if (Heartbeat.player.direction == "up") then
@@ -108,7 +108,7 @@ function Spells.pattern.strike.use()
 		for j=0,4 do
 			local entity = Heartbeat.getEntity(startX + (i * 25), startY + (j * 25))
 			if (entity ~= nil) then
-				Heartbeat.updateEntityHealth(entity, entity.health - 5)
+				Dyshexia.updateEntityHealth(entity, -5)
 				-- Since strike doesn't currently do anything fancy
 				-- We can simply reuse the burst animation
 				Spells.x = entity.x
