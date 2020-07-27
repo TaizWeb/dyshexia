@@ -87,13 +87,13 @@ function Spells.pattern.ball.use()
 	end
 
 	if (Heartbeat.player.direction == "up") then
-		Animation.newAnimation(ballAnimation, (Spells.y - y) / 5)
+		Animation.newAnimation(ballAnimation, (Spells.y - y) / 5, {Spells.direction, Spells.x, Spells.y})
 	elseif (Heartbeat.player.direction == "down") then
-		Animation.newAnimation(ballAnimation, -1 * (Spells.y - y) / 5)
+		Animation.newAnimation(ballAnimation, -1 * (Spells.y - y) / 5, {Spells.direction, Spells.x, Spells.y})
 	elseif (Heartbeat.player.direction == "left") then
-		Animation.newAnimation(ballAnimation, (Spells.x - x) / 5)
+		Animation.newAnimation(ballAnimation, (Spells.x - x) / 5, {Spells.direction, Spells.x, Spells.y})
 	else
-		Animation.newAnimation(ballAnimation, -1 * (Spells.x - x) / 5)
+		Animation.newAnimation(ballAnimation, -1 * (Spells.x - x) / 5, {Spells.direction, Spells.x, Spells.y})
 	end
 end
 
@@ -120,24 +120,24 @@ function Spells.pattern.strike.use()
 	end
 end
 
-function ballAnimation(frame)
+function ballAnimation(frame, data)
 	local changeX = 0
 	local changeY = 0
 
 	-- Make the ball fire in the right direciton
 	-- I know I'm sinning here checking direction again but I haven't figured out a better way to do this
 	-- I could just stick it in Spells in the cast functions later to save one more computation
-	if (Spells.direction == "up") then
+	if (data[1] == "up") then
 		changeY = frame * -5
-	elseif (Spells.direction == "down") then
+	elseif (data[1] == "down") then
 		changeY = frame * 5
-	elseif (Spells.direction == "left") then
+	elseif (data[1] == "left") then
 		changeX = frame * -5
 	else
 		changeX = frame * 5
 	end
 
-	Spells.draw(Spells.x + changeX, Spells.y + changeY)
+	Spells.draw(data[2] + changeX, data[3] + changeY)
 end
 
 function burstAnimation()
