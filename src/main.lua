@@ -1,5 +1,6 @@
 love.graphics.setDefaultFilter("nearest", "nearest")
 require("lib/heartbeat")
+require("dyshexia")
 require("player")
 require("tiles")
 require("level")
