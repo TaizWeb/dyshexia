@@ -10,10 +10,10 @@ function love.conf(t)
 		pause = "return",
 		action = "z",
 		back = "x",
-		up = "k",
-		down = "j",
-		left = "h",
-		right = "l",
+		up = "up",
+		down = "down",
+		left = "left",
+		right = "right",
 	}
 end
 
