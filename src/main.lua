@@ -59,7 +59,7 @@ function love.load()
 	isPaused = false
 end
 
--- moveEntity: Moves an entity in a given direction assuming there's no obstruction
+-- moveEntity: Moves an entity in a given direction assuming there's no obstruction. Returns true on success, false otherwise
 function moveEntity(this, direction)
 	local attemptedX = this.x
 	local attemptedY = this.y
@@ -85,20 +85,23 @@ function moveEntity(this, direction)
 		this.direction = "down"
 	end
 
-	-- Making sure no collisions in the attempted movement
-	local tile = Heartbeat.getTile(attemptedX, attemptedY)
-	local entity = Heartbeat.getEntity(attemptedX, attemptedY)
-	if ((tile == nil or not tile.isSolid) and entity == nil) then
-		this.x = attemptedX
-		this.y = attemptedY
-	end
-
 	-- My turn your turn and update vision
 	if (this == Heartbeat.player) then
 		Player.checkVision()
 		Player.regenMana()
 		Heartbeat.doEntities()
 	end
+
+	-- Making sure no collisions in the attempted movement
+	local tile = Heartbeat.getTile(attemptedX, attemptedY)
+	local entity = Heartbeat.getEntity(attemptedX, attemptedY)
+	if ((tile == nil or not tile.isSolid) and entity == nil) then
+		this.x = attemptedX
+		this.y = attemptedY
+		return true
+	end
+
+	return false
 end
 
 function isAdjacent(entity, target)
