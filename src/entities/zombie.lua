@@ -35,22 +35,25 @@ function Zombie.draw(this)
 end
 
 function Zombie.behaivor(this)
-	-- Later I'll do a thing where it checks the player's x/y and moves depending on that
 	local diffX = Heartbeat.player.x - this.x
 	local diffY = Heartbeat.player.y - this.y
+	-- Attack the player if adjaecent
 	if (isAdjacent(this, Heartbeat.player)) then
 		Zombie.attack(this)
+	-- If not, move
 	elseif (math.abs(diffX) > math.abs(diffY)) then
+		-- Decide between left/right
 		if (diffX < 0) then
-			moveEntity(this, Keybinds.left)
+			moveEntity(this, "left")
 		else
-			moveEntity(this, Keybinds.right)
+			moveEntity(this, "right")
 		end
 	else
+		-- Decide between up/down
 		if (diffY < 0) then
-			moveEntity(this, Keybinds.up)
+			moveEntity(this, "up")
 		else
-			moveEntity(this, Keybinds.down)
+			moveEntity(this, "down")
 		end
 	end
 end
