@@ -37,6 +37,9 @@ end
 function Zombie.behaivor(this)
 	local diffX = Heartbeat.player.x - this.x
 	local diffY = Heartbeat.player.y - this.y
+	if (not (math.abs(diffX) < 75) and not (math.abs(diffY) < 75)) then
+		return
+	end
 	-- Attack the player if adjaecent
 	if (isAdjacent(this, Heartbeat.player)) then
 		Zombie.attack(this)
