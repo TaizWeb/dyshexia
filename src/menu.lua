@@ -54,6 +54,11 @@ local itemPreview = {
 function Menu.handleKey(key)
 	-- Move the cursor up or down
 	if (key == Keybinds.down) then
+		if (Menu.promptUsage and Menu.useSelection == 1) then
+			-- This is a bit fucky, I'll probably make promptUsage a currentMenu
+			Menu.useSelection = 2
+			return
+		end
 		if (Menu.currentMenu == "Main" and Menu.selection < Menu.maxSelection) then
 			Menu.selection = Menu.selection + 1
 		elseif (Menu.currentMenu == "Inventory" and Menu.itemSelection < Menu.itemMaxSelection) then
@@ -61,6 +66,10 @@ function Menu.handleKey(key)
 		end
 	end
 	if (key == Keybinds.up) then
+		if (Menu.promptUsage and Menu.useSelection == 2) then
+			Menu.useSelection = 1
+			return
+		end
 		if (Menu.currentMenu == "Main" and Menu.selection > 1) then
 			Menu.selection = Menu.selection - 1
 		elseif (Menu.currentMenu == "Inventory" and Menu.itemSelection > 1) then
@@ -74,7 +83,11 @@ function Menu.handleKey(key)
 			Menu.currentMenu = Menu.menuElements[Menu.selection]
 		elseif (Menu.currentMenu == "Inventory") then
 			if (Menu.promptUsage) then
-				Menu.useItem(Heartbeat.player.inventory[Menu.itemSelection])
+				if (Menu.useSelection == 1) then
+					Menu.useItem(Heartbeat.player.inventory[Menu.itemSelection])
+				elseif (Menu.useSelection == 2) then
+					Heartbeat.player.removeInventoryItem(Heartbeat.player.inventory[Menu.itemMaxSelection])
+				end
 				Menu.promptUsage = false
 			else
 				Menu.promptUsage = true
