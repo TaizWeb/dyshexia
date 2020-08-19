@@ -24,10 +24,10 @@ function Player.draw(this)
 	if (not this.forwardFace) then
 		this.scaleX = -2
 		this.scaleY = 2
-		this.offsetX = 11
+		this.offsetX = 14
 	else
 		this.scaleX = 2
-		this.offsetX = 5
+		this.offsetX = 2
 		this.offsetY = 5
 	end
 
