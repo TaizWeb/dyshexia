@@ -18,6 +18,9 @@ Level = {
 		scroll = 70,
 		health_potion = 90
 	},
+	enemies = {
+		zombie = 40
+	},
 	-- How often loot appears, default is 20 (1/20 chance for a floor tile to have loot)
 	lootChance = 20,
 	-- How often enemies appear, default is 40 (1/40 chance per tile)
@@ -298,8 +301,16 @@ function Level.generateLoot(x, y)
 end
 
 function Level.generateEnemy(x, y)
-	if (math.random(Level.enemyChance) == 1) then
-		Heartbeat.newEntity(Zombie, x, y)
+	local chosenEntity = nil
+	for k,v in pairs(Level.enemies) do
+		if (math.random(v) == 1) then
+			chosenEntity = k
+			break
+		end
+	end
+
+	if (chosenEntity ~= nil) then
+		Heartbeat.newEntity(Heartbeat.lookupEntity(chosenEntity), x, y)
 	end
 end
 
